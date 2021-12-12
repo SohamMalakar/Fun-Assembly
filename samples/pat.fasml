@@ -1,0 +1,24 @@
+
+PRT ENTER A NUMBER:
+SCN $N
+
+MOV $I 1
+
+> $OUTER
+IF LEQ $I $N
+[
+    MOV $J 0
+
+    > $INNER
+    IF LOW $J $I
+    [
+        PRT *
+
+        ADD $J $J 1
+        JMP $INNER
+    ]
+
+    ENDL
+    ADD $I $I 1
+    JMP $OUTER
+]
