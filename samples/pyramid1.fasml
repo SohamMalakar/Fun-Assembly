@@ -1,0 +1,40 @@
+
+PRT Enter the number of lines:
+SCN $N
+
+MOV $I 0
+MOV $SCOUNT 1
+MOV $M $N
+
+> $OUTER
+IF LOW $I $N
+[
+    MOV $J 1
+
+    > $SPACES
+    IF LOW $J $M
+    [
+        SPC
+
+        ADD $J $J 1
+        JMP $SPACES
+    ]
+
+    MOV $K 1
+
+    > $STARS
+    IF LEQ $K $SCOUNT
+    [
+        PRT *
+
+        ADD $K $K 1
+        JMP $STARS
+    ]
+
+    ENDL
+    ADD $I $I 1
+    ADD $SCOUNT $SCOUNT 2
+    SUB $M $M 1
+    JMP $OUTER
+]
+

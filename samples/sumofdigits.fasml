@@ -1,0 +1,23 @@
+
+PRT Enter a number:
+SCN $N
+
+MOV $SUM 0
+MOV $M $N
+
+> $LOOP
+IF GRT $M 0
+[
+    MOD $R $M 10
+
+    ADD $SUM $SUM $R
+
+    SUB $M $M $R
+    DIV $M $M 10
+
+    JMP $LOOP
+]
+
+PRT The sum of digits of $N is $SUM
+ENDL
+
