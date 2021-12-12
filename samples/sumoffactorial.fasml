@@ -1,0 +1,23 @@
+
+PRT Enter the limit:
+SCN $N
+
+MOV $FACT 1
+MOV $SUM 0
+MOV $I 1
+
+> $LOOP
+IF LEQ $I $N
+[
+    MUL $FACT $FACT $I
+    ADD $SUM $SUM $FACT
+
+    ADD $I $I 1
+
+    JMP $LOOP
+]
+
+PRT The result for $N is $SUM
+
+ENDL
+

@@ -1,22 +1,19 @@
 
-PRT Enter the limit:
+PRT Enter a number:
 SCN $N
 
-MOV $FACT 1
-MOV $SUM 0
-MOV $I 1
+MOV $F 1
 
-IF LEQ $I $N
+> $LOOP
+IF GRT $N 0
 [
-    MUL $FACT $FACT $I
-    ADD $SUM $SUM $FACT
+    MUL $F $F $N
+    SUB $N $N 1
 
-    ADD $I $I 1
-
-    JMP 9
+    JMP $LOOP
 ]
 
-PRT The result for $N is $SUM
+PRT The factorial is $F
 
 ENDL
 
