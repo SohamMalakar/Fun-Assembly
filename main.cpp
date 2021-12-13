@@ -31,7 +31,7 @@ typedef enum
 
 } op_code;
 
-/* op_code: ENDL, TAB, SPC, >, ! */
+/* op_code: ENDL, TAB, SPC, EXL, >, ! */
 
 typedef enum
 {
@@ -74,9 +74,9 @@ float modulo(float x, float y)
 
 int main(int argc, char **argv)
 {
-    if (argc != 2)
+    if (argc < 2)
     {
-        cout << "Usage: " << argv[0] << " <file> " << endl;
+        cout << "Usage: " << argv[0] << " <file> [optional: args]" << endl;
         exit(1);
     }
 
@@ -120,6 +120,8 @@ int main(int argc, char **argv)
 
     int line_num = 0;
 
+    unordered_map<string, string> memory;
+
     while (getline(file, line))
     {
         lines.push_back(file.tellg());
@@ -147,6 +149,36 @@ int main(int argc, char **argv)
             pairs[line_num + 1] = top;
         }
 
+        stringstream ss;
+        istringstream iss(line);
+
+        copy(istream_iterator<string>(iss), istream_iterator<string>(), ostream_iterator<string>(ss, " "));
+
+        int i = 0;
+
+        op_code op;
+        string token;
+
+        while (getline(ss, token, ' '))
+        {
+            if (i == 0)
+            {
+                if (token == ">")
+                    op = LINE;
+                else
+                    break;
+            }
+            else
+            {
+                if (token.at(0) == '$')
+                    update_map(memory, token, to_string(line_num + 1));
+            
+                break;
+            }
+
+            i++;
+        }
+
         line_num++;
     }
 
@@ -163,7 +195,17 @@ int main(int argc, char **argv)
     file.clear();
     file.seekg(0);
 
-    unordered_map<string, string> memory;
+    /* Add those args here */
+    string lang_argc = to_string(argc - 1);
+
+    memory["$ARGC"] = lang_argc;
+
+    for (int i = 0; i < argc - 1; i++)
+    {
+        string key_args = "$" + to_string(i);
+        string value_args(argv[i + 1]);
+        memory[key_args] = value_args;
+    }
 
     string key, value1, value2;
 
@@ -185,6 +227,9 @@ int main(int argc, char **argv)
         {
             log_code log;
 
+            if (token == "!") /* comment */
+                break;
+
             if (i == 0)
             {
                 /* For op code only */
@@ -196,6 +241,8 @@ int main(int argc, char **argv)
                     cout << "\t";
                 else if (token == "SPC") /* space */
                     cout << " ";
+                else if (token == "EXL") /* exclamation mark */
+                    cout << "!";
                 else if (token == "SCN")
                     op = SCN;
                 else if (token == "MOV")
@@ -217,9 +264,8 @@ int main(int argc, char **argv)
                 else if (token == "JMP")
                     op = JMP;
                 else if (token == ">") /* jump line */
-                    op = LINE;
-                else if (token == "!") /* comment */
                     break;
+                    // op = LINE;
                 else if (token == "[" || token == "]") /* ignore */
                     break;
                 else
@@ -232,7 +278,7 @@ int main(int argc, char **argv)
                     exit(1);
                 }
 
-                if (token == "ENDL" || token == "TAB" || token == "SPC")
+                if (token == "ENDL" || token == "TAB" || token == "SPC" || token == "EXL")
                     break;
             }
             else
@@ -299,18 +345,30 @@ int main(int argc, char **argv)
                         // Perform the operation
                         float result;
 
-                        if (op == ADD)
-                            result = stof(value1) + stof(value2);
-                        else if (op == SUB)
-                            result = stof(value1) - stof(value2);
-                        else if (op == MUL)
-                            result = stof(value1) * stof(value2);
-                        else if (op == DIV)
-                            result = stof(value1) / stof(value2);
-                        else if (op == MOD)
-                            result = modulo(stof(value1), stof(value2));
-                        else if (op == POW)
-                            result = pow(stof(value1), stof(value2));
+                        try
+                        {
+                            if (op == ADD)
+                                result = stof(value1) + stof(value2);
+                            else if (op == SUB)
+                                result = stof(value1) - stof(value2);
+                            else if (op == MUL)
+                                result = stof(value1) * stof(value2);
+                            else if (op == DIV)
+                                result = stof(value1) / stof(value2);
+                            else if (op == MOD)
+                                result = modulo(stof(value1), stof(value2));
+                            else if (op == POW)
+                                result = pow(stof(value1), stof(value2));
+                        }
+                        catch (const std::invalid_argument& ia)
+                        {
+                            cout << "Type Error: We only deal with floats!" << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
 
                         // Store the result in the hashtable
                         update_map(memory, key, to_string(result));
@@ -358,8 +416,22 @@ int main(int argc, char **argv)
                         else // Fetch the value from the hashtable
                             value2 = memory[token];
 
-                        // Perform the condition
-                        bool condition = (log == EQL && !(stof(value1) == stof(value2))) || (log == GRT && !(stof(value1) > stof(value2))) || (log == LOW && !(stof(value1) < stof(value2))) || (log == GEQ && !(stof(value1) >= stof(value2))) || (log == LEQ && !(stof(value1) <= stof(value2))) || (log == NEQ && !(stof(value1) != stof(value2)));
+                        // Perform the operation
+                        bool condition;
+
+                        try
+                        {
+                            condition = (log == EQL && !(stof(value1) == stof(value2))) || (log == GRT && !(stof(value1) > stof(value2))) || (log == LOW && !(stof(value1) < stof(value2))) || (log == GEQ && !(stof(value1) >= stof(value2))) || (log == LEQ && !(stof(value1) <= stof(value2))) || (log == NEQ && !(stof(value1) != stof(value2)));
+                        }
+                        catch (const std::invalid_argument& ia)
+                        {
+                            cout << "Type Error: We only deal with floats!" << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
 
                         // If the condition is true, jump to the line specified
                         if (condition)
@@ -375,10 +447,22 @@ int main(int argc, char **argv)
                 }
                 else if (op == JMP)
                 {
-                    if (token.at(0) != '$')
-                        line_num = stoi(token) - 1;
-                    else
-                        line_num = stoi(memory[token]) - 1;
+                    try
+                    {
+                        if (token.at(0) != '$')
+                            line_num = stoi(token) - 1;
+                        else
+                            line_num = stoi(memory[token]) - 1;
+                    }
+                    catch (const std::invalid_argument& ia)
+                    {
+                        cout << "Index Error: Invalid jump index!" << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
+                    }
 
                     // Jump to the line specified
                     file.clear();
