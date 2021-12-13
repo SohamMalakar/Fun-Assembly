@@ -1,0 +1,26 @@
+
+IF NEQ $ARGC 2
+[
+    PRT Usage: $0 <number>
+    ENDL
+    JMP $EXIT
+]
+
+MOV $N $1
+
+MOV $F 1
+
+> $LOOP
+IF GRT $N 0
+[
+    MUL $F $F $N
+    SUB $N $N 1
+
+    JMP $LOOP
+]
+
+PRT The factorial is $F
+
+ENDL
+
+> $EXIT
