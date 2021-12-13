@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <sstream>
 #include <string>
 #include <iterator>
@@ -54,6 +55,18 @@ void update_map(unordered_map<T1, T2> &map, T1 key, T2 value)
         map[key] = value;
 }
 
+void remove_file(string name)
+{
+    try
+    {
+        filesystem::remove(name);
+    }
+    catch (const std::filesystem::filesystem_error& err)
+    {
+        std::cout << "filesystem error: " << err.what() << '\n';
+    }
+}
+
 float modulo(float x, float y)
 {
     return x - y * floor(x / y);
@@ -69,13 +82,31 @@ int main(int argc, char **argv)
 
     ifstream file;
 
-    file.open(argv[1]);
+    file.open(argv[1], ios_base::binary);
 
     if (!file.is_open())
     {
         cout << argv[0] << ": error: " << argv[1] << ": No such file" << endl;
         exit(1);
     }
+
+    // Temp file
+    string name(argv[1]);
+
+    string tmp = name + ".tmp";
+
+    ofstream file_tmp(tmp, ios_base::binary | ios_base::out);
+
+    // Copying
+    file_tmp << file.rdbuf();
+
+    // Original file closed
+    file.close();
+
+    // Copied temp file closed
+    file_tmp.close();
+
+    file.open(tmp);
 
     string line;
 
@@ -102,6 +133,10 @@ int main(int argc, char **argv)
             if (stk.empty())
             {
                 cout << "Error: ] without matching [" << endl;
+
+                file.close();
+                remove_file(tmp);
+                
                 exit(1);
             }
 
@@ -118,6 +153,10 @@ int main(int argc, char **argv)
     if (!stk.empty())
     {
         cout << "Error: [ without matching ]" << endl;
+
+        file.close();
+        remove_file(tmp);
+        
         exit(1);
     }
 
@@ -186,6 +225,10 @@ int main(int argc, char **argv)
                 else
                 {
                     cout << "Error: " << token << " is not a valid op code" << endl;
+
+                    file.close();
+                    remove_file(tmp);
+
                     exit(1);
                 }
 
@@ -294,6 +337,10 @@ int main(int argc, char **argv)
                         else
                         {
                             cout << "Error: " << token << " is not a valid comparison operator" << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
                             exit(1);
                         }
                     }
@@ -351,5 +398,11 @@ int main(int argc, char **argv)
         line_num++;
     }
 
+    // Copied file closed
+    file.close();
+
+    // Deleting the copied tmp file
+    remove_file(tmp);
+    
     return 0;
 }
