@@ -19,6 +19,7 @@ typedef enum
     PRT,
     SCN,
     MOV,
+    INT,
     ADD,
     SUB,
     MUL,
@@ -26,8 +27,7 @@ typedef enum
     MOD,
     POW,
     IF,
-    JMP,
-    LINE /* > */
+    JMP
 
 } op_code;
 
@@ -161,11 +161,12 @@ int main(int argc, char **argv)
 
         while (getline(ss, token, ' '))
         {
+            if (token.at(0) == '!')
+                break;
+
             if (i == 0)
             {
-                if (token == ">")
-                    op = LINE;
-                else
+                if (token != ">")
                     break;
             }
             else
@@ -227,7 +228,7 @@ int main(int argc, char **argv)
         {
             log_code log;
 
-            if (token == "!") /* comment */
+            if (token.at(0) == '!') /* comment */
                 break;
 
             if (i == 0)
@@ -247,6 +248,8 @@ int main(int argc, char **argv)
                     op = SCN;
                 else if (token == "MOV")
                     op = MOV;
+                else if (token == "INT") /* integer */
+                    op = INT;
                 else if (token == "ADD")
                     op = ADD;
                 else if (token == "SUB")
@@ -265,7 +268,6 @@ int main(int argc, char **argv)
                     op = JMP;
                 else if (token == ">") /* jump line */
                     break;
-                    // op = LINE;
                 else if (token == "[" || token == "]") /* ignore */
                     break;
                 else
@@ -289,10 +291,37 @@ int main(int argc, char **argv)
                     if (i != 1)
                         cout << " ";
 
-                    if (token.at(0) != '$')
-                        cout << token;
-                    else // Fetch the value from the hashtable and print it
+                    if (token.at(0) == '&')
+                    {
+                        string var;
+
+                        try
+                        {
+                            var = "$" + token.substr(1);
+                        }
+                        catch (const std::out_of_range& oor)
+                        {
+                            cout << "Error: " << oor.what() << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
+
+                        string value = "$" + memory[var];
+
+                        // Do something with value
+                        cout << memory[value];
+                    }
+                    else if (token.at(0) == '$')
+                    {
                         cout << memory[token];
+                    }
+                    else
+                    {
+                        cout << token;
+                    }
                 }
                 else if (op == SCN)
                 {
@@ -312,10 +341,87 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        if (token.at(0) != '$')
-                            update_map(memory, key, token);
-                        else
+                        if (token.at(0) == '&')
+                        {
+                            string var;
+
+                            try
+                            {
+                                var = "$" + token.substr(1);
+                            }
+                            catch (const std::out_of_range& oor)
+                            {
+                                cout << "Error: " << oor.what() << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+
+                            string value = "$" + memory[var];
+
+                            // Do something with value
+                            update_map(memory, key, memory[value]);
+                        }
+                        else if (token.at(0) == '$')
+                        {
                             update_map(memory, key, memory[token]);
+                        }
+                        else
+                        {
+                            update_map(memory, key, token);
+                        }
+
+                        break; /* 3 tokens */
+                    }
+                }
+                else if (op == INT)
+                {
+                    // Convert the value to integer
+                    if (i == 1)
+                    {
+                        key = token;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (token.at(0) == '&')
+                            {
+                                string var = "$" + token.substr(1);
+                                string value = "$" + memory[var];
+
+                                // Do something with value
+                                update_map(memory, key, to_string(stoi(memory[value])));
+                            }
+                            else if (token.at(0) == '$')
+                            {
+                                update_map(memory, key, to_string(stoi(memory[token])));
+                            }
+                            else
+                            {
+                                update_map(memory, key, to_string(stoi(token)));
+                            }
+                        }
+                        catch (const std::invalid_argument& ia)
+                        {
+                            cout << "Error: " << ia.what() << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
+                        catch (const std::out_of_range& oor)
+                        {
+                            cout << "Error: " << oor.what() << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
 
                         break; /* 3 tokens */
                     }
@@ -330,17 +436,71 @@ int main(int argc, char **argv)
                     }
                     else if (i == 2)
                     {
-                        if (token.at(0) != '$')
-                            value1 = token;
-                        else // Fetch the value from the hashtable
+                        if (token.at(0) == '&')
+                        {
+                            string var;
+
+                            try
+                            {
+                                var = "$" + token.substr(1);
+                            }
+                            catch (const std::out_of_range& oor)
+                            {
+                                cout << "Error: " << oor.what() << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+
+                            string value = "$" + memory[var];
+
+                            // Do something with value
+                            value1 = memory[value];
+                        }
+                        else if (token.at(0) == '$')
+                        {
                             value1 = memory[token];
+                        }
+                        else
+                        {
+                            value1 = token;
+                        }
                     }
                     else if (i == 3)
                     {
-                        if (token.at(0) != '$')
-                            value2 = token;
-                        else // Fetch the value from the hashtable
+                        if (token.at(0) == '&')
+                        {
+                            string var;
+
+                            try
+                            {
+                                var = "$" + token.substr(1);
+                            }
+                            catch (const std::out_of_range& oor)
+                            {
+                                cout << "Error: " << oor.what() << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+
+                            string value = "$" + memory[var];
+
+                            // Do something with value
+                            value2 = memory[value];
+                        }
+                        else if (token.at(0) == '$')
+                        {
                             value2 = memory[token];
+                        }
+                        else
+                        {
+                            value2 = token;
+                        }
 
                         // Perform the operation
                         float result;
@@ -404,17 +564,71 @@ int main(int argc, char **argv)
                     }
                     else if (i == 2)
                     {
-                        if (token.at(0) != '$')
-                            value1 = token;
-                        else // Fetch the value from the hashtable
+                        if (token.at(0) == '&')
+                        {
+                            string var;
+
+                            try
+                            {
+                                var = "$" + token.substr(1);
+                            }
+                            catch (const std::out_of_range& oor)
+                            {
+                                cout << "Error: " << oor.what() << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+                            
+                            string value = "$" + memory[var];
+
+                            // Do something with value
+                            value1 = memory[value];
+                        }
+                        else if (token.at(0) == '$')
+                        {
                             value1 = memory[token];
+                        }
+                        else
+                        {
+                            value1 = token;
+                        }
                     }
                     else if (i == 3)
                     {
-                        if (token.at(0) != '$')
-                            value2 = token;
-                        else // Fetch the value from the hashtable
+                        if (token.at(0) == '&')
+                        {
+                            string var;
+
+                            try
+                            {
+                                var = "$" + token.substr(1);
+                            }
+                            catch (const std::out_of_range& oor)
+                            {
+                                cout << "Error: " << oor.what() << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+                            
+                            string value = "$" + memory[var];
+
+                            // Do something with value
+                            value2 = memory[value];
+                        }
+                        else if (token.at(0) == '$')
+                        {
                             value2 = memory[token];
+                        }
+                        else
+                        {
+                            value2 = token;
+                        }
 
                         // Perform the operation
                         bool condition;
@@ -449,14 +663,35 @@ int main(int argc, char **argv)
                 {
                     try
                     {
-                        if (token.at(0) != '$')
-                            line_num = stoi(token) - 1;
-                        else
+                        if (token.at(0) == '&')
+                        {
+                            string var = "$" + token.substr(1);
+                            string value = "$" + memory[var];
+
+                            // Do something with value
+                            line_num = stoi(memory[value]) - 1;
+                        }
+                        else if (token.at(0) == '$')
+                        {
                             line_num = stoi(memory[token]) - 1;
+                        }
+                        else
+                        {
+                            line_num = stoi(token) - 1;
+                        }
                     }
                     catch (const std::invalid_argument& ia)
                     {
                         cout << "Index Error: Invalid jump index!" << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
+                    }
+                    catch (const std::out_of_range& oor)
+                    {
+                        cout << "Error: " << oor.what() << endl;
 
                         file.close();
                         remove_file(tmp);
@@ -468,11 +703,6 @@ int main(int argc, char **argv)
                     file.clear();
                     file.seekg(lines[line_num]);
                     goto outer;
-                }
-                else if (op == LINE)
-                {
-                    update_map(memory, token, to_string(line_num + 1));
-                    break; /* 2 tokens */
                 }
             }
 
