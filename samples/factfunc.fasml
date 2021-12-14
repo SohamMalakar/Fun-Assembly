@@ -1,0 +1,32 @@
+
+JMP $MAIN
+
+> $FACTORIAL
+    MOV $F 1
+    MOV $A $N
+
+    MOV $F 1
+
+    > $LOOP
+    IF GRT $A 0
+    [
+        MUL $F $F $A
+        SUB $A $A 1
+
+        JMP $LOOP
+    ]
+    MOV $VAL $F
+    JMP $RETURN
+
+
+> $MAIN
+PRT Enter a number:
+SCN $N
+
+JMP $FACTORIAL
+> $RETURN
+MOV $FACT $VAL
+
+PRT The factorial is $FACT
+
+ENDL
