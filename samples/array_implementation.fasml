@@ -1,0 +1,37 @@
+
+! ARRAYS
+
+MOV $N 10
+MOV $I 0
+
+! Storing the values in the array
+> $LOOP1
+IF LOW $I $N
+[
+    POW $P $I 2
+    INT $P $P
+
+    ARR $NUMS $I $P
+
+    ADD $I $I 1
+
+    JMP $LOOP1
+]
+
+MOV $I 0
+
+! Printing the array
+> $LOOP2
+IF LOW $I $N
+[
+    ARRV $VAR $NUMS $I
+    
+    PRT $VAR
+    ENDL
+
+    ADD $I $I 1
+
+    JMP $LOOP2
+]
+
+BYE 0
