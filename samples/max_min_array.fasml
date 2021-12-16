@@ -1,0 +1,65 @@
+
+PRT Enter the size of the array:
+SCN $N
+
+INT $I 0
+
+> $INPUT
+IF LOW $I $N
+[
+    PRT Enter element $I =
+    SPC
+    
+    SCN $X
+    
+    INT $X $X
+    
+    ARR $NUMS $I $X
+
+    ADD $I $I 1
+    INT $I $I
+
+    JMP $INPUT
+]
+
+INT $J 0
+
+ARRV $HIGH $NUMS $J
+INT $HIGH $HIGH
+
+ARRV $LOW $NUMS $J
+INT $LOW $LOW
+
+ADD $J $J 1
+INT $J $J
+
+> $FIND
+
+IF LOW $J $N
+[
+    ARRV $V $NUMS $J
+    INT $V $V
+
+    IF GRT $V $HIGH
+    [
+        INT $HIGH $V
+    ]
+
+    IF LOW $V $LOW
+    [
+        INT $LOW $V
+    ]
+
+    ADD $J $J 1
+    INT $J $J
+
+    JMP $FIND
+]
+
+PRT The lowest value in the array is $LOW
+ENDL
+
+PRT The highest value in the array is $HIGH
+ENDL
+
+BYE 0
