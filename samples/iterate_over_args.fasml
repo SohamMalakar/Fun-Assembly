@@ -1,0 +1,14 @@
+
+MOV $I 0
+
+> $LOOP
+IF LOW $I $ARGC
+[
+    INT $I $I
+    PRT &I
+    ENDL
+
+    ADD $I $I 1
+
+    JMP $LOOP
+]

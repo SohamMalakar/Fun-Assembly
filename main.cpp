@@ -27,7 +27,10 @@ typedef enum
     MOD,
     POW,
     IF,
-    JMP
+    JMP,
+    ARR, /* Store data in array */
+    ARRV, /* Access value in array */
+    BYE /* Exit */
 
 } op_code;
 
@@ -224,6 +227,10 @@ int main(int argc, char **argv)
         op_code op;
         string token;
 
+        string arr_name;
+        string index;
+        string val;
+
         while (getline(ss, token, ' '))
         {
             log_code log;
@@ -266,6 +273,12 @@ int main(int argc, char **argv)
                     op = IF;
                 else if (token == "JMP")
                     op = JMP;
+                else if (token == "ARR")
+                    op = ARR;
+                else if (token == "ARRV")
+                    op = ARRV;
+                else if (token == "BYE") /* exit */
+                    op = BYE;
                 else if (token == ">") /* jump line */
                     break;
                 else if (token == "[" || token == "]") /* ignore */
@@ -703,6 +716,96 @@ int main(int argc, char **argv)
                     file.clear();
                     file.seekg(lines[line_num]);
                     goto outer;
+                }
+                else if (op == ARR)
+                {
+                    try
+                    {
+                        if (i == 1)
+                        {
+                            arr_name = token;
+                        }
+                        else if (i == 2)
+                        {
+                            // Find the index
+                            if (token.at(0) == '$')
+                                index = to_string(stoi(memory[token]));
+                            else
+                                index = to_string(stoi(token));
+                        }
+                        else if (i == 3)
+                        {
+                            // Assign the value
+                            if (token.at(0) == '$')
+                                val = memory[token];
+                            else
+                                val = token;
+                            
+                            update_map(memory, arr_name + "(" + index + ")", val);
+
+                            break;
+                        }
+                    }
+                    catch (const std::invalid_argument& ia)
+                    {
+                        cout << "Type Error: We only deal with floats!" << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
+                    }
+                }
+                else if (op == ARRV)
+                {
+                    try
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                        }
+                        else if (i == 2)
+                        {
+                            // Find the array name
+                            arr_name = token;
+                        }
+                        else if (i == 3)
+                        {
+                            // Assign the value
+                            if (token.at(0) == '$')
+                                index = to_string(stoi(memory[token]));
+                            else
+                                index = to_string(stoi(token));
+
+                            update_map(memory, key, memory[arr_name + "(" + index + ")"]);
+
+                            break;
+                        }
+                    }
+                    catch (const std::invalid_argument& ia)
+                    {
+                        cout << "Type Error: Index should be integer only!" << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
+                    }
+                }
+                else if (op == BYE)
+                {
+                    file.close();
+                    remove_file(tmp);
+
+                    try
+                    {
+                        exit(stoi(token));
+                    }
+                    catch (const std::invalid_argument& ia)
+                    {
+                        cout << "Type Error: Exit code should be integer only!" << endl;
+                        exit(1);
+                    }
                 }
             }
 

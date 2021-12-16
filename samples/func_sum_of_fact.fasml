@@ -1,0 +1,46 @@
+
+PRT Enter the limit:
+SCN $N
+
+MOV $FACT 1
+MOV $SUM 0
+MOV $I 1
+
+> $LOOP
+IF LEQ $I $N
+[
+    JMP $FUNC_FACT
+    > $FUNC
+
+    ADD $SUM $SUM $FACT
+
+    ADD $I $I 1
+    JMP $LOOP
+]
+
+PRT The result for $N is $SUM
+ENDL
+
+JMP $SKIP
+
+! Factorial function
+> $FUNC_FACT
+
+    MOV $F_N $I
+    MOV $F_F 1
+
+    > $STARTS
+    IF GRT $F_N 0
+    [
+        MUL $F_F $F_F $F_N
+        SUB $F_N $F_N 1
+
+        JMP $STARTS
+    ]
+
+    MOV $FACT $F_F
+
+    JMP $FUNC ! Return
+    ! Function definition completed
+
+> $SKIP
