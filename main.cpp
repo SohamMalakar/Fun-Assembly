@@ -668,7 +668,7 @@ int main(int argc, char **argv)
                             file.clear();
                             file.seekg(lines[line_num]);
 
-                            continue;
+                            goto outer;
                         }
                     }
                 }
