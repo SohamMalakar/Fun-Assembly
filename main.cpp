@@ -137,7 +137,7 @@ int main(int argc, char **argv)
         {
             if (stk.empty())
             {
-                cout << "Error: ] without matching [" << endl;
+                cout << "Error: Line " << line_num + 1 << ": ] without matching [" << endl;
 
                 file.close();
                 remove_file(tmp);
@@ -188,7 +188,7 @@ int main(int argc, char **argv)
 
     if (!stk.empty())
     {
-        cout << "Error: [ without matching ]" << endl;
+        cout << "Error: Line " << line_num + 1 << ": [ without matching ]" << endl;
 
         file.close();
         remove_file(tmp);
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
                     break;
                 else
                 {
-                    cout << "Error: " << token << " is not a valid op code" << endl;
+                    cout << "Error: Line " << line_num + 1 << ": " << token << " is not a valid op code" << endl;
 
                     file.close();
                     remove_file(tmp);
@@ -314,7 +314,7 @@ int main(int argc, char **argv)
                         }
                         catch (const std::out_of_range& oor)
                         {
-                            cout << "Error: " << oor.what() << endl;
+                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -364,7 +364,7 @@ int main(int argc, char **argv)
                             }
                             catch (const std::out_of_range& oor)
                             {
-                                cout << "Error: " << oor.what() << endl;
+                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                                 file.close();
                                 remove_file(tmp);
@@ -419,7 +419,7 @@ int main(int argc, char **argv)
                         }
                         catch (const std::invalid_argument& ia)
                         {
-                            cout << "Error: " << ia.what() << endl;
+                            cout << "Error: Line " << line_num + 1 << ": " << ia.what() << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -428,7 +428,7 @@ int main(int argc, char **argv)
                         }
                         catch (const std::out_of_range& oor)
                         {
-                            cout << "Error: " << oor.what() << endl;
+                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -459,7 +459,7 @@ int main(int argc, char **argv)
                             }
                             catch (const std::out_of_range& oor)
                             {
-                                cout << "Error: " << oor.what() << endl;
+                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                                 file.close();
                                 remove_file(tmp);
@@ -493,7 +493,7 @@ int main(int argc, char **argv)
                             }
                             catch (const std::out_of_range& oor)
                             {
-                                cout << "Error: " << oor.what() << endl;
+                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                                 file.close();
                                 remove_file(tmp);
@@ -535,7 +535,7 @@ int main(int argc, char **argv)
                         }
                         catch (const std::invalid_argument& ia)
                         {
-                            cout << "Type Error: We only deal with floats!" << endl;
+                            cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -567,7 +567,7 @@ int main(int argc, char **argv)
                             log = LEQ;
                         else
                         {
-                            cout << "Error: " << token << " is not a valid comparison operator" << endl;
+                            cout << "Error: Line " << line_num + 1 << ": " << token << " is not a valid comparison operator" << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -587,7 +587,7 @@ int main(int argc, char **argv)
                             }
                             catch (const std::out_of_range& oor)
                             {
-                                cout << "Error: " << oor.what() << endl;
+                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                                 file.close();
                                 remove_file(tmp);
@@ -621,7 +621,7 @@ int main(int argc, char **argv)
                             }
                             catch (const std::out_of_range& oor)
                             {
-                                cout << "Error: " << oor.what() << endl;
+                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                                 file.close();
                                 remove_file(tmp);
@@ -652,7 +652,7 @@ int main(int argc, char **argv)
                         }
                         catch (const std::invalid_argument& ia)
                         {
-                            cout << "Type Error: We only deal with floats!" << endl;
+                            cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -695,7 +695,7 @@ int main(int argc, char **argv)
                     }
                     catch (const std::invalid_argument& ia)
                     {
-                        cout << "Index Error: Invalid jump index!" << endl;
+                        cout << "Index Error: Line " << line_num + 1 << ": Invalid jump index!" << endl;
 
                         file.close();
                         remove_file(tmp);
@@ -704,7 +704,7 @@ int main(int argc, char **argv)
                     }
                     catch (const std::out_of_range& oor)
                     {
-                        cout << "Error: " << oor.what() << endl;
+                        cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                         file.close();
                         remove_file(tmp);
@@ -748,7 +748,7 @@ int main(int argc, char **argv)
                     }
                     catch (const std::invalid_argument& ia)
                     {
-                        cout << "Type Error: We only deal with floats!" << endl;
+                        cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
 
                         file.close();
                         remove_file(tmp);
@@ -784,7 +784,7 @@ int main(int argc, char **argv)
                     }
                     catch (const std::invalid_argument& ia)
                     {
-                        cout << "Type Error: Index should be integer only!" << endl;
+                        cout << "Type Error: Line " << line_num + 1 << ": Index should be integer only!" << endl;
 
                         file.close();
                         remove_file(tmp);
@@ -803,7 +803,7 @@ int main(int argc, char **argv)
                     }
                     catch (const std::invalid_argument& ia)
                     {
-                        cout << "Type Error: Exit code should be integer only!" << endl;
+                        cout << "Type Error: Line " << line_num + 1 << ": Exit code should be integer only!" << endl;
                         exit(1);
                     }
                 }
