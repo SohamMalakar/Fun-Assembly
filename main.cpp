@@ -34,14 +34,14 @@ typedef enum
 
 } op_code;
 
-/* op_code: ENDL, TAB, SPC, EXL, >, ! */
+/* op_code: ENDL, TAB, SPC, EXL, DOL, AMP, >, ! */
 
 typedef enum
 {
     EQL,
     NEQ,
-    GRT,
-    LOW,
+    GTR,
+    LSS,
     GEQ,
     LEQ
 
@@ -251,6 +251,10 @@ int main(int argc, char **argv)
                     cout << " ";
                 else if (token == "EXL") /* exclamation mark */
                     cout << "!";
+                else if (token == "DOL") /* dollar sign */
+                    cout << "$";
+                else if (token == "AMP") /* ampersand */
+                    cout << "&";
                 else if (token == "SCN")
                     op = SCN;
                 else if (token == "MOV")
@@ -293,7 +297,7 @@ int main(int argc, char **argv)
                     exit(1);
                 }
 
-                if (token == "ENDL" || token == "TAB" || token == "SPC" || token == "EXL")
+                if (token == "ENDL" || token == "TAB" || token == "SPC" || token == "EXL" || token == "DOL" || token == "AMP")
                     break;
             }
             else
@@ -557,10 +561,10 @@ int main(int argc, char **argv)
                             log = EQL;
                         else if (token == "NEQ")
                             log = NEQ;
-                        else if (token == "GRT")
-                            log = GRT;
-                        else if (token == "LOW")
-                            log = LOW;
+                        else if (token == "GTR")
+                            log = GTR;
+                        else if (token == "LSS")
+                            log = LSS;
                         else if (token == "GEQ")
                             log = GEQ;
                         else if (token == "LEQ")
@@ -648,7 +652,7 @@ int main(int argc, char **argv)
 
                         try
                         {
-                            condition = (log == EQL && !(stof(value1) == stof(value2))) || (log == GRT && !(stof(value1) > stof(value2))) || (log == LOW && !(stof(value1) < stof(value2))) || (log == GEQ && !(stof(value1) >= stof(value2))) || (log == LEQ && !(stof(value1) <= stof(value2))) || (log == NEQ && !(stof(value1) != stof(value2)));
+                            condition = (log == EQL && !(stof(value1) == stof(value2))) || (log == GTR && !(stof(value1) > stof(value2))) || (log == LSS && !(stof(value1) < stof(value2))) || (log == GEQ && !(stof(value1) >= stof(value2))) || (log == LEQ && !(stof(value1) <= stof(value2))) || (log == NEQ && !(stof(value1) != stof(value2)));
                         }
                         catch (const std::invalid_argument& ia)
                         {
