@@ -5,7 +5,7 @@ SCN $N
 INT $I 0
 
 > $INPUT
-IF LOW $I $N
+IF LSS $I $N
 [
     PRT Enter element $I =
     SPC
@@ -27,27 +27,27 @@ INT $J 0
 ARRV $HIGH $NUMS $J
 INT $HIGH $HIGH
 
-ARRV $LOW $NUMS $J
-INT $LOW $LOW
+ARRV $LSS $NUMS $J
+INT $LSS $LSS
 
 ADD $J $J 1
 INT $J $J
 
 > $FIND
 
-IF LOW $J $N
+IF LSS $J $N
 [
     ARRV $V $NUMS $J
     INT $V $V
 
-    IF GRT $V $HIGH
+    IF GTR $V $HIGH
     [
         INT $HIGH $V
     ]
 
-    IF LOW $V $LOW
+    IF LSS $V $LSS
     [
-        INT $LOW $V
+        INT $LSS $V
     ]
 
     ADD $J $J 1
@@ -56,7 +56,7 @@ IF LOW $J $N
     JMP $FIND
 ]
 
-PRT The lowest value in the array is $LOW
+PRT The Lowest value in the array is $LSS
 ENDL
 
 PRT The highest value in the array is $HIGH

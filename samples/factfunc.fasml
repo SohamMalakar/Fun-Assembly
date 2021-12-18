@@ -8,7 +8,7 @@ JMP $MAIN
     MOV $F 1
 
     > $LOOP
-    IF GRT $A 0
+    IF GTR $A 0
     [
         MUL $F $F $A
         SUB $A $A 1

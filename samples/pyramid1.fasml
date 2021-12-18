@@ -7,12 +7,12 @@ MOV $SCOUNT 1
 MOV $M $N
 
 > $OUTER
-IF LOW $I $N
+IF LSS $I $N
 [
     MOV $J 1
 
     > $SPACES
-    IF LOW $J $M
+    IF LSS $J $M
     [
         SPC
 

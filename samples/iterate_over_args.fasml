@@ -2,7 +2,7 @@
 MOV $I 0
 
 > $LOOP
-IF LOW $I $ARGC
+IF LSS $I $ARGC
 [
     INT $I $I
     PRT &I

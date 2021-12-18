@@ -6,7 +6,7 @@ MOV $I 0
 
 ! Storing the values in the array
 > $LOOP1
-IF LOW $I $N
+IF LSS $I $N
 [
     POW $P $I 2
     INT $P $P
@@ -22,7 +22,7 @@ MOV $I 0
 
 ! Printing the array
 > $LOOP2
-IF LOW $I $N
+IF LSS $I $N
 [
     ARRV $VAR $NUMS $I
     

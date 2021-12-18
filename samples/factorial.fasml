@@ -5,7 +5,7 @@ SCN $N
 MOV $F 1
 
 > $LOOP
-IF GRT $N 0
+IF GTR $N 0
 [
     MUL $F $F $N
     SUB $N $N 1

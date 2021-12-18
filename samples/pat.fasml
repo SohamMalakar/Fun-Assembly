@@ -10,7 +10,7 @@ IF LEQ $I $N
     MOV $J 0
 
     > $INNER
-    IF LOW $J $I
+    IF LSS $J $I
     [
         PRT *
 
