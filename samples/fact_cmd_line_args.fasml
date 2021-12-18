@@ -3,7 +3,7 @@ IF NEQ $ARGC 2
 [
     PRT Usage: $0 <number>
     ENDL
-    JMP $EXIT
+    BYE 1
 ]
 
 MOV $N $1
@@ -22,5 +22,3 @@ IF GTR $N 0
 PRT The factorial is $F
 
 ENDL
-
-> $EXIT
