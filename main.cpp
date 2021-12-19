@@ -30,11 +30,16 @@ typedef enum
     JMP,
     ARR, /* Store data in array */
     ARRV, /* Access value in array */
-    BYE /* Exit */
+    BYE, /* Exit */
+    STR, /* Store strings as char arrays */
+    CAT /* String concatenation */
 
 } op_code;
 
 /* op_code: ENDL, TAB, SPC, EXL, DOL, AMP, >, ! */
+
+/* keyword: NULL */
+string NULL_OP("NULL");
 
 typedef enum
 {
@@ -43,7 +48,9 @@ typedef enum
     GTR,
     LSS,
     GEQ,
-    LEQ
+    LEQ,
+    SEQL, /* Check if two strings are equal */
+    SNEQ /* Check if two strings are not equal */
 
 } log_code;
 
@@ -231,6 +238,9 @@ int main(int argc, char **argv)
         string index;
         string val;
 
+        string string_sum = "";
+        int num_of_cats = 0;
+
         while (getline(ss, token, ' '))
         {
             log_code log;
@@ -281,6 +291,10 @@ int main(int argc, char **argv)
                     op = ARR;
                 else if (token == "ARRV")
                     op = ARRV;
+                else if (token == "STR")
+                    op = STR;
+                else if (token == "CAT")
+                    op = CAT;
                 else if (token == "BYE") /* exit */
                     op = BYE;
                 else if (token == ">") /* jump line */
@@ -569,6 +583,10 @@ int main(int argc, char **argv)
                             log = GEQ;
                         else if (token == "LEQ")
                             log = LEQ;
+                        else if (token == "SEQL")
+                            log = SEQL;
+                        else if (token == "SNEQ")
+                            log = SNEQ;
                         else
                         {
                             cout << "Error: Line " << line_num + 1 << ": " << token << " is not a valid comparison operator" << endl;
@@ -652,7 +670,7 @@ int main(int argc, char **argv)
 
                         try
                         {
-                            condition = (log == EQL && !(stof(value1) == stof(value2))) || (log == GTR && !(stof(value1) > stof(value2))) || (log == LSS && !(stof(value1) < stof(value2))) || (log == GEQ && !(stof(value1) >= stof(value2))) || (log == LEQ && !(stof(value1) <= stof(value2))) || (log == NEQ && !(stof(value1) != stof(value2)));
+                            condition = (log == EQL && !(stof(value1) == stof(value2))) || (log == GTR && !(stof(value1) > stof(value2))) || (log == LSS && !(stof(value1) < stof(value2))) || (log == GEQ && !(stof(value1) >= stof(value2))) || (log == LEQ && !(stof(value1) <= stof(value2))) || (log == NEQ && !(stof(value1) != stof(value2))) || (log == SEQL && !(value1 == value2)) || (log == SNEQ && !(value1 != value2));
                         }
                         catch (const std::invalid_argument& ia)
                         {
@@ -794,6 +812,120 @@ int main(int argc, char **argv)
                         remove_file(tmp);
 
                         exit(1);
+                    }
+                }
+                else if (op == STR)
+                {
+                    string str;
+
+                    if (token.at(0) == '&')
+                    {
+                        string var;
+                        
+                        try
+                        {
+                            var = "$" + token.substr(1);
+                        }
+                        catch (const std::out_of_range& oor)
+                        {
+                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
+
+                        string value = "$" + memory[var];
+
+                        // Do something with value
+                        str = memory[value];
+                    }
+                    else if (token.at(0) == '$')
+                    {
+                        str = memory[token];
+                    }
+                    else
+                    {
+                        str = token;
+                    }
+
+                    // Convert the string to c style string
+                    for (int i = 0; i < str.length(); i++)
+                    {
+                        char c[2] = {str.at(i), '\0'};
+                        string s(c);
+                        update_map(memory, token + "(" + to_string(i) + ")", s);
+                    }
+
+                    update_map(memory, token + "(" + to_string(str.length()) + ")", NULL_OP);
+                }
+                else if (op == CAT)
+                {
+                    if (i == 1)
+                    {
+                        // Number of strings to concatenate
+                        try
+                        {
+                            num_of_cats = stoi(token);
+                        }
+                        catch (const std::invalid_argument& ia)
+                        {
+                            cout << "Type Error: Line " << line_num + 1 << ": Number of strings to concatenate should be integer only!" << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
+                    }
+                    else if (i == 2)
+                    {
+                        key = token;
+                    }
+                    else
+                    {
+                        string str;
+
+                        if (token.at(0) == '&')
+                        {
+                            string var;
+
+                            try
+                            {
+                                var = "$" + token.substr(1);
+                            }
+                            catch (const std::out_of_range& oor)
+                            {
+                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+
+                            string value = "$" + memory[var];
+
+                            // Do something with value
+                            str = memory[value];
+                        }
+                        else if (token.at(0) == '$')
+                        {
+                            str = memory[token];
+                        }
+                        else
+                        {
+                            str = token;
+                        }
+
+                        string_sum += str;
+                        
+                        if (i == num_of_cats + 2)
+                        {
+                            update_map(memory, key, string_sum);
+                            break;
+                        }
                     }
                 }
                 else if (op == BYE)

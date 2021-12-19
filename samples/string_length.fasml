@@ -1,0 +1,28 @@
+
+PRT Enter your name:
+SPC
+SCN $name
+
+STR $name
+MOV $i 0
+
+> $loop1
+
+INT $i $i
+ARRV $c $name $i
+
+IF SNEQ $c NULL
+[
+    ADD $i $i 1
+    JMP $loop1
+]
+
+MOV $len $i
+
+PRT The length of $name is $len
+ENDL
+
+CAT 2 $concat Hello, $name
+
+PRT $concat
+ENDL
