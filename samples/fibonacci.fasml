@@ -1,0 +1,30 @@
+
+! Fibonacci Series
+
+PRT Enter the limit:
+SCN $l
+
+MOV $i 0
+
+MOV $a 0
+MOV $b 1
+
+PRT The Series is
+TAB
+
+> $loop1
+IF LSS $i $l
+[
+    INT $a $a
+    PRT $a
+    TAB
+
+    ADD $c $a $b
+    MOV $a $b
+    MOV $b $c
+
+    ADD $i $i 1
+    JMP $loop1
+]
+
+ENDL
