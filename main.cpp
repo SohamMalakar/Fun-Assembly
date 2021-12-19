@@ -867,11 +867,35 @@ int main(int argc, char **argv)
                         // Number of strings to concatenate
                         try
                         {
-                            num_of_cats = stoi(token);
+                            if (token.at(0) == '&')
+                            {
+                                string var = "$" + token.substr(1);
+                                string value = "$" + memory[var];
+
+                                // Do something with value
+                                num_of_cats = stoi(memory[value]);
+                            }
+                            else if (token.at(0) == '$')
+                            {
+                                num_of_cats = stoi(memory[token]);
+                            }
+                            else
+                            {
+                                num_of_cats = stoi(token);
+                            }
                         }
                         catch (const std::invalid_argument& ia)
                         {
                             cout << "Type Error: Line " << line_num + 1 << ": Number of strings to concatenate should be integer only!" << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
+                        catch (const std::out_of_range& oor)
+                        {
+                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                             file.close();
                             remove_file(tmp);
