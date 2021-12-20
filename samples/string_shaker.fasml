@@ -1,0 +1,25 @@
+
+MOV $str1 abc
+MOV $str2 def
+
+STR $str1
+STR $str2
+
+MOV $i 0
+
+> $loop1
+
+ARRV $c1 $str1 $i
+ARRV $c2 $str2 $i
+
+IF SNEQ $c1 NULL
+[
+    CAT 3 $str3 $str3 $c1 $c2
+
+    ADD $i $i 1
+    INT $i $i
+    JMP $loop1
+]
+
+PRT $str3
+ENDL
