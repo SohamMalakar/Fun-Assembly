@@ -1,0 +1,30 @@
+
+PRT Enter your name with underscore separated words:
+SPC
+SCN $name
+
+MOV $i 0
+STR $name
+
+ARRV $abb $name $i
+
+> $loop1
+
+ARRV $c $name $i
+
+IF SNEQ $c NULL
+[
+    ADD $i $i 1
+    INT $i $i
+
+    IF SEQL $c _
+    [
+        ARRV $nc $name $i
+        CAT 2 $abb $abb $nc
+    ]
+    
+    JMP $loop1
+]
+
+PRT The initials are: $abb
+ENDL
