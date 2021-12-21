@@ -23,7 +23,7 @@ It's a simple token-based programming language written in C++ by [Soham Malakar]
 
 ## Overview
 
-It is simple Procedure Oriented Programming language which uses a simple expression evaluator. It stores the variables and elements in a hash table. The instruction set for this language is very small and simple that it does not come with any loop structures or function. These functionalities can be obtained using jumps.
+It is a simple Procedure Oriented Programming Language which uses a simple expression evaluator. It stores the variables and elements in a hash table. As the instruction set for this language is very small and simple, it does not come with any loop structures or functions. These functionalities can be obtained using jumps.
 
 ---
 
