@@ -9,27 +9,28 @@
 
 ## About
 
-It's a simple token-based programming language written in C++ by [Soham Malakar](https://www.linkedin.com/in/soham-malakar-108533207) and [Sanket Tarafder](https://www.linkedin.com/in/sanket-tarafder-bbb33117b).
+It's a simple token-based programming language written in C++.
+Authors- [Soham Malakar](https://www.linkedin.com/in/soham-malakar-108533207) and [Sanket Tarafder](https://www.linkedin.com/in/sanket-tarafder-bbb33117b).
 
 ---
 
 ## Know About The Authors
 
-[**Soham Malakar**](https://www.linkedin.com/in/soham-malakar-108533207) is a Bachelor of Science (Hons.) student in the Computer Science Department of Scottish Church College, Kolkata. He is very passionate about computers and innovation.
+[**Soham Malakar**](https://www.linkedin.com/in/soham-malakar-108533207) is a student pursuing Bachelor of Science (Hons.) in the Computer Science Department of Scottish Church College, Kolkata. He is very passionate about computers and innovation.
 
-[**Sanket Tarafder**](https://www.linkedin.com/in/sanket-tarafder-bbb33117b) is a Bachelor of Technology student of Information Technology Department of Kalyani Government Engineering College, Nadia. He is a computer and data enthusiast.
+[**Sanket Tarafder**](https://www.linkedin.com/in/sanket-tarafder-bbb33117b) is a student pursuing Bachelor of Technology in the Information Technology Department of Kalyani Government Engineering College, Nadia. He is a computer and data enthusiast.
 
 ---
 
 ## Overview
 
-It is a simple Procedure Oriented Programming Language which uses a simple expression evaluator. It stores the variables and elements in a hash table. As the instruction set for this language is very small and simple, it does not come with any loop structures or functions. These functionalities can be obtained using jumps.
+It is a Procedure Oriented Programming Language which uses a simple expression evaluator. It stores the variables and elements in a hash table. As the instructions set for this language is very small and simple, it does not come with any loop structures or functions. These functionalities can be obtained using jumps.
 
 ---
 
 ## Disadvantages
 
-- You can't use the same variable name anywhere.
+- Same variable name can't be used anywhere.
 - It doesn't support structures and file handling.
 
 ---
@@ -137,7 +138,7 @@ The 8 Logical Operators with their meanings are provided here:
 
 ## Syntax
 
-The syntax is very simple and easy to understand.
+The syntax is very simplistic and easy to understand.
 
 ### Hello World
 
