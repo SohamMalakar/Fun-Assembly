@@ -215,7 +215,7 @@ To convert a variable to integer, we use the keyword `INT`.
 INT $var1 $var2
 ```
 
-Here the compiler converts the variable `$var1` to integer and assign it to the variable `$var2`.
+Here the compiler converts the variable `$var2` to integer and assign it to the variable `$var1`.
 
 ---
 
