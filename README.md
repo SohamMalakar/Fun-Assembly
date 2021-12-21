@@ -9,7 +9,7 @@
 
 ## About
 
-It's a simple token-based programming language written in C++.
+It's a simple token-based programming language written in C++. <br>
 Authors- [Soham Malakar](https://www.linkedin.com/in/soham-malakar-108533207) and [Sanket Tarafder](https://www.linkedin.com/in/sanket-tarafder-bbb33117b).
 
 ---
