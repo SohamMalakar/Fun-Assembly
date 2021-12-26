@@ -89,37 +89,37 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 25 reserved Keywords and 8 Logical Operators are present in this language those are recognized by this compiler.
+There are total 25 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
 The 25 Keywords with their functions are provided here:
 
-| Keywords | Description                                      |
-| -------- | ------------------------------------------------ |
-| `PRT`    | Print the tokens                                 |
-| `SCN`    | Take inputs from the keyboard                    |
-| `MOV`    | Assign a value to a variable                     |
-| `INT`    | Convert a variable to integer                    |
-| `ADD`    | Add two variables                                |
-| `SUB`    | Subtract two variables                           |
-| `MUL`    | Multiply two variables                           |
-| `DIV`    | Divide two variables                             |
-| `MOD`    | Modulo two variables                             |
-| `POW`    | Raise a variable to the power                    |
-| `IF`     | If the condition is true, execute the block      |
-| `>`      | Create a label                                   |
-| `JMP`    | Jump to a label                                  |
-| `ARR`    | Assign a value to an array                       |
-| `ARRV`   | Assign the element's value into another variable |
-| `BYE`    | Exit the program                                 |
-| `ENDL`   | Print a new line                                 |
-| `TAB`    | Print a tab                                      |
-| `SPC`    | Print a space                                    |
-| `EXL`    | Print an exclamation mark                        |
-| `DOL`    | Print a dollar sign                              |
-| `AMP`    | Print an ampersand                               |
-| `!`      | Comment                                          |
-| `STR`    | Stores strings as character arrays               |
-| `CAT`    | Concatenate strings                              |
+| Keywords | Description                                       |
+| -------- | ------------------------------------------------- |
+| `PRT`    | Prints the tokens                                 |
+| `SCN`    | Takes inputs from the keyboard                    |
+| `MOV`    | Assigns a value to a variable                     |
+| `INT`    | Converts a variable to an integer                 |
+| `ADD`    | Adds two variables                                |
+| `SUB`    | Subtracts two variables                           |
+| `MUL`    | Multiplies two variables                          |
+| `DIV`    | Divides two variables                             |
+| `MOD`    | Modulo of two variables                           | 
+| `POW`    | Raises a variable to the given power              | 
+| `IF`     | If the condition is true, executes the block      |
+| `>`      | Creates a label                                   |
+| `JMP`    | Jumps to a label                                  |
+| `ARR`    | Assigns a value to an array                       |
+| `ARRV`   | Assigns the element's value into another variable |
+| `BYE`    | Exits the program                                 |
+| `ENDL`   | Prints a new line                                 | 
+| `TAB`    | Prints a tab                                      |
+| `SPC`    | Prints a space                                    |
+| `EXL`    | Prints an exclamation mark                        |
+| `DOL`    | Prints a dollar sign                              |
+| `AMP`    | Prints an ampersand                               |
+| `!`      | Comments out any text                             |
+| `STR`    | Stores strings as character arrays                |
+| `CAT`    | Concatenates strings                              |
 
 The 8 Logical Operators with their meanings are provided here:
 
@@ -163,7 +163,7 @@ MOV $var1 Hello
 ```
 
 Here, we assign the value 'Hello' to the variable `$var1`.
-There is no data types in this language. So, you can assign any type of data to a variable.
+There are no data types in this language. So, you can assign any type of data to a variable.
 
 ---
 
@@ -175,7 +175,7 @@ Now, to print the variable, we use the keyword `PRT`.
 PRT $var1
 ```
 
-And yes you can print multiple variables at once.
+And yes. You can print multiple variables at once.
 
 ---
 
@@ -222,7 +222,7 @@ Here the compiler converts the variable `$var2` to integer and assign it to the 
 
 ### Labels
 
-Instead of separate `loop structures` or `if-else structures` we incorporate only `IF` with `JMP` to perform those complex tasks also. To work with `JMP` easily we introduce `labels` in this language.
+Instead of separate `loop structures` or `if-else structures` we incorporate only `IF` with `JMP` to perform even the complex tasks. To work with `JMP` easily, we have introduced `labels` in this language.
 
 The `label` is a special type of variable which will hold it's own line number into the given label.
 
@@ -331,8 +331,7 @@ _Method 2:_
 ```
 PRT $array(0)
 ```
-
-And here, the compiler prints the value of the element at the index `$index` of the array `$array`.
+Here, the compiler prints the value of the element at the index `$index` of the array `$array`.
 
 This way of printing an array is not recommended because it's hard coded.
 So, it can't be iterated.
@@ -367,7 +366,7 @@ To concatenate two or more strings together, we use the keyword `CAT`.
 CAT 2 $str3 $str1 $str2
 ```
 
-Here we first specify the number of the strings to be concatenated immediately after the `CAT` keyword. After that we have three string variables `$str1`, `$str2` and `$str3`. The string `$str2` is concatenated with `$str1` and then it is stored into `$str3`.
+Here, we first specify the number of the strings to be concatenated immediately after the `CAT` keyword. After that we have three string variables `$str1`, `$str2` and `$str3`. The string `$str2` is concatenated with `$str1` and then it is stored into `$str3`.
 
 ---
 
@@ -428,13 +427,13 @@ IF LSS $I $ARGC
 Here, we assign the value of the variable `$I` to 0.
 
 Then, we check if the value of the variable `$I` is less than the value of the variable `$ARGC`.
-If it is, we print the `$I`th argument from the command line.
+If it is true, we print the `$I`th argument from the command line.
 
 Then, we increment the value of the variable `$I` by 1.
 
 Finally, we jump back to the label `$LOOP`.
 
-Look closely, it's `PRT` followed by `&I`. It means that we grab the value of the variable `$I` and put a extra `$` before it.
+If we look closely,we find it's `PRT` followed by `&I`. It means that we grab the value of the variable `$I` and put a extra `$` before it.
 So, the interpreter will print the value of `$0`, `$1`, `$2`, and so on.
 
 You can also print them in the following way:
