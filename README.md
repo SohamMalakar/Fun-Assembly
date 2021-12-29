@@ -449,7 +449,7 @@ PRT $0 $1 $2
 
 ## Samples
 
-There are some examples in the `samples` folder. You can analyze them to get a better understanding.
+There are some examples in the [samples](https://github.com/SohamMalakar/Fun-Assembly/tree/master/samples) folder. You can analyze them to get a better understanding.
 
 > **_NOTE:_** Make sure these files are in LF format and not in CRLF format.
 
