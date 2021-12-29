@@ -37,7 +37,8 @@ It is a Procedure Oriented Programming Language which uses a simple expression e
 
 ## Installation
 
-There is no precompiled binary available for this compiler. You have to compile it manually in your system.
+There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases) section.
+If you don't find any suitable version for your system, please compile it manually.
 
 > **_NOTE:_** Make sure you have the latest g++ compiler installed in your system.
 
