@@ -455,6 +455,6 @@ There are some examples in the [samples](https://github.com/SohamMalakar/Fun-Ass
 
 ---
 
-## Contribuion
+## Contribution
 
 If you want to contribute to this language, feel free to open an [issue](https://github.com/SohamMalakar/Fun-Assembly/issues) or create a [pull request](https://github.com/SohamMalakar/Fun-Assembly/pulls).
