@@ -29,4 +29,4 @@ MOV $FACT $VAL
 
 PRT The factorial is $FACT
 
-ENDL
+PRT $ENDL

@@ -10,14 +10,14 @@ MOV $a 0
 MOV $b 1
 
 PRT The Series is
-TAB
+PRT $TAB
 
 > $loop1
 IF LSS $i $l
 [
     INT $a $a
     PRT $a
-    TAB
+    PRT $TAB
 
     ADD $c $a $b
     MOV $a $b
@@ -27,4 +27,4 @@ IF LSS $i $l
     JMP $loop1
 ]
 
-ENDL
+PRT $ENDL
