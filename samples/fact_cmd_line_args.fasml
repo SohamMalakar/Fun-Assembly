@@ -2,7 +2,7 @@
 IF NEQ $ARGC 2
 [
     PRT Usage: $0 <number>
-    ENDL
+    PRT $ENDL
     BYE 1
 ]
 
@@ -21,4 +21,4 @@ IF GTR $N 0
 
 PRT The factorial is $F
 
-ENDL
+PRT $ENDL

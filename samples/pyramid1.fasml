@@ -14,7 +14,7 @@ IF LSS $I $N
     > $SPACES
     IF LSS $J $M
     [
-        SPC
+        PRT $SPC
 
         ADD $J $J 1
         JMP $SPACES
@@ -31,7 +31,7 @@ IF LSS $I $N
         JMP $STARS
     ]
 
-    ENDL
+    PRT $ENDL
     ADD $I $I 1
     ADD $SCOUNT $SCOUNT 2
     SUB $M $M 1

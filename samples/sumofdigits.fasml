@@ -19,5 +19,5 @@ IF GTR $M 0
 ]
 
 PRT The sum of digits of $N is $SUM
-ENDL
+PRT $ENDL
 

@@ -15,5 +15,5 @@ IF GTR $N 0
 
 PRT The factorial is $F
 
-ENDL
+PRT $ENDL
 

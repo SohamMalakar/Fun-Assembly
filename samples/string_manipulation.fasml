@@ -1,7 +1,7 @@
 
-PRT Enter your name with underscore separated words:
-SPC
-SCN $name
+PRT Enter your name:
+PRT $SPC
+SCNL $name
 
 MOV $i 0
 STR $name
@@ -17,7 +17,7 @@ IF SNEQ $c NULL
     ADD $i $i 1
     INT $i $i
 
-    IF SEQL $c _
+    IF SEQL $c $SPC
     [
         ARRV $nc $name $i
         CAT 2 $abb $abb $nc
@@ -27,4 +27,4 @@ IF SNEQ $c NULL
 ]
 
 PRT The initials are: $abb
-ENDL
+PRT $ENDL

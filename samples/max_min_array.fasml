@@ -8,7 +8,7 @@ INT $I 0
 IF LSS $I $N
 [
     PRT Enter element $I =
-    SPC
+    PRT $SPC
     
     SCN $X
     
@@ -57,9 +57,9 @@ IF LSS $J $N
 ]
 
 PRT The Lowest value in the array is $LSS
-ENDL
+PRT $ENDL
 
 PRT The highest value in the array is $HIGH
-ENDL
+PRT $ENDL
 
 BYE 0

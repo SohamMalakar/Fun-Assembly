@@ -27,7 +27,7 @@ IF LSS $I $N
     ARRV $VAR $NUMS $I
     
     PRT $VAR
-    ENDL
+    PRT $ENDL
 
     ADD $I $I 1
 

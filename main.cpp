@@ -1,14 +1,14 @@
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <sstream>
-#include <string>
-#include <iterator>
 #include <algorithm>
 #include <cmath>
-#include <vector>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <sstream>
 #include <stack>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
@@ -17,7 +17,8 @@ using namespace std;
 typedef enum
 {
     PRT,
-    SCN,
+    SCN,  /* Take input upto next space */
+    SCNL, /* Take input upto next line */
     MOV,
     INT,
     ADD,
@@ -28,15 +29,15 @@ typedef enum
     POW,
     IF,
     JMP,
-    ARR, /* Store data in array */
+    ARR,  /* Store data in array */
     ARRV, /* Access value in array */
-    BYE, /* Exit */
-    STR, /* Store strings as char arrays */
-    CAT /* String concatenation */
+    BYE,  /* Exit */
+    STR,  /* Store strings as char arrays */
+    CAT   /* String concatenation */
 
 } op_code;
 
-/* op_code: ENDL, TAB, SPC, EXL, DOL, AMP, >, ! */
+/* op_code: >, ! */
 
 /* keyword: NULL */
 string NULL_OP("NULL");
@@ -50,7 +51,7 @@ typedef enum
     GEQ,
     LEQ,
     SEQL, /* Check if two strings are equal */
-    SNEQ /* Check if two strings are not equal */
+    SNEQ  /* Check if two strings are not equal */
 
 } log_code;
 
@@ -71,7 +72,7 @@ void remove_file(string name)
     {
         filesystem::remove(name);
     }
-    catch (const std::filesystem::filesystem_error& err)
+    catch (const std::filesystem::filesystem_error &err)
     {
         std::cout << "filesystem error: " << err.what() << '\n';
     }
@@ -148,7 +149,7 @@ int main(int argc, char **argv)
 
                 file.close();
                 remove_file(tmp);
-                
+
                 exit(1);
             }
 
@@ -183,7 +184,7 @@ int main(int argc, char **argv)
             {
                 if (token.at(0) == '$')
                     update_map(memory, token, to_string(line_num + 1));
-            
+
                 break;
             }
 
@@ -199,7 +200,7 @@ int main(int argc, char **argv)
 
         file.close();
         remove_file(tmp);
-        
+
         exit(1);
     }
 
@@ -209,7 +210,14 @@ int main(int argc, char **argv)
     /* Add those args here */
     string lang_argc = to_string(argc - 1);
 
+    // Add predefined variables
     memory["$ARGC"] = lang_argc;
+    memory["$ENDL"] = "\n";
+    memory["$TAB"] = "\t";
+    memory["$SPC"] = " ";
+    memory["$EXL"] = "!";
+    memory["$DOL"] = "$";
+    memory["$AMP"] = "&";
 
     for (int i = 0; i < argc - 1; i++)
     {
@@ -222,7 +230,7 @@ int main(int argc, char **argv)
 
     line_num = 0;
 
-    outer:
+outer:
     while (getline(file, line))
     {
         stringstream ss;
@@ -253,23 +261,13 @@ int main(int argc, char **argv)
                 /* For op code only */
                 if (token == "PRT")
                     op = PRT;
-                else if (token == "ENDL") /* newline */
-                    cout << endl;
-                else if (token == "TAB") /* tab */
-                    cout << "\t";
-                else if (token == "SPC") /* space */
-                    cout << " ";
-                else if (token == "EXL") /* exclamation mark */
-                    cout << "!";
-                else if (token == "DOL") /* dollar sign */
-                    cout << "$";
-                else if (token == "AMP") /* ampersand */
-                    cout << "&";
                 else if (token == "SCN")
                     op = SCN;
+                else if (token == "SCNL")
+                    op = SCNL;
                 else if (token == "MOV")
                     op = MOV;
-                else if (token == "INT") /* integer */
+                else if (token == "INT") /* cast to integer */
                     op = INT;
                 else if (token == "ADD")
                     op = ADD;
@@ -310,9 +308,6 @@ int main(int argc, char **argv)
 
                     exit(1);
                 }
-
-                if (token == "ENDL" || token == "TAB" || token == "SPC" || token == "EXL" || token == "DOL" || token == "AMP")
-                    break;
             }
             else
             {
@@ -330,7 +325,7 @@ int main(int argc, char **argv)
                         {
                             var = "$" + token.substr(1);
                         }
-                        catch (const std::out_of_range& oor)
+                        catch (const std::out_of_range &oor)
                         {
                             cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -363,6 +358,15 @@ int main(int argc, char **argv)
                     // Store the input in the hashtable
                     update_map(memory, token, input);
                 }
+                else if (op == SCNL)
+                {
+                    // Asks for input up to a new line
+                    string input;
+                    getline(cin, input);
+
+                    // Store the input in the hashtable
+                    update_map(memory, token, input);
+                }
                 else if (op == MOV)
                 {
                     // Move the value from one variable to another
@@ -380,7 +384,7 @@ int main(int argc, char **argv)
                             {
                                 var = "$" + token.substr(1);
                             }
-                            catch (const std::out_of_range& oor)
+                            catch (const std::out_of_range &oor)
                             {
                                 cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -435,7 +439,7 @@ int main(int argc, char **argv)
                                 update_map(memory, key, to_string(stoi(token)));
                             }
                         }
-                        catch (const std::invalid_argument& ia)
+                        catch (const std::invalid_argument &ia)
                         {
                             cout << "Error: Line " << line_num + 1 << ": " << ia.what() << endl;
 
@@ -444,7 +448,7 @@ int main(int argc, char **argv)
 
                             exit(1);
                         }
-                        catch (const std::out_of_range& oor)
+                        catch (const std::out_of_range &oor)
                         {
                             cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -475,7 +479,7 @@ int main(int argc, char **argv)
                             {
                                 var = "$" + token.substr(1);
                             }
-                            catch (const std::out_of_range& oor)
+                            catch (const std::out_of_range &oor)
                             {
                                 cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -509,7 +513,7 @@ int main(int argc, char **argv)
                             {
                                 var = "$" + token.substr(1);
                             }
-                            catch (const std::out_of_range& oor)
+                            catch (const std::out_of_range &oor)
                             {
                                 cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -551,7 +555,7 @@ int main(int argc, char **argv)
                             else if (op == POW)
                                 result = pow(stof(value1), stof(value2));
                         }
-                        catch (const std::invalid_argument& ia)
+                        catch (const std::invalid_argument &ia)
                         {
                             cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
 
@@ -589,7 +593,8 @@ int main(int argc, char **argv)
                             log = SNEQ;
                         else
                         {
-                            cout << "Error: Line " << line_num + 1 << ": " << token << " is not a valid comparison operator" << endl;
+                            cout << "Error: Line " << line_num + 1 << ": " << token
+                                 << " is not a valid comparison operator" << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -607,7 +612,7 @@ int main(int argc, char **argv)
                             {
                                 var = "$" + token.substr(1);
                             }
-                            catch (const std::out_of_range& oor)
+                            catch (const std::out_of_range &oor)
                             {
                                 cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -616,7 +621,7 @@ int main(int argc, char **argv)
 
                                 exit(1);
                             }
-                            
+
                             string value = "$" + memory[var];
 
                             // Do something with value
@@ -641,7 +646,7 @@ int main(int argc, char **argv)
                             {
                                 var = "$" + token.substr(1);
                             }
-                            catch (const std::out_of_range& oor)
+                            catch (const std::out_of_range &oor)
                             {
                                 cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -650,7 +655,7 @@ int main(int argc, char **argv)
 
                                 exit(1);
                             }
-                            
+
                             string value = "$" + memory[var];
 
                             // Do something with value
@@ -670,9 +675,15 @@ int main(int argc, char **argv)
 
                         try
                         {
-                            condition = (log == EQL && !(stof(value1) == stof(value2))) || (log == GTR && !(stof(value1) > stof(value2))) || (log == LSS && !(stof(value1) < stof(value2))) || (log == GEQ && !(stof(value1) >= stof(value2))) || (log == LEQ && !(stof(value1) <= stof(value2))) || (log == NEQ && !(stof(value1) != stof(value2))) || (log == SEQL && !(value1 == value2)) || (log == SNEQ && !(value1 != value2));
+                            condition = (log == EQL && !(stof(value1) == stof(value2))) ||
+                                        (log == GTR && !(stof(value1) > stof(value2))) ||
+                                        (log == LSS && !(stof(value1) < stof(value2))) ||
+                                        (log == GEQ && !(stof(value1) >= stof(value2))) ||
+                                        (log == LEQ && !(stof(value1) <= stof(value2))) ||
+                                        (log == NEQ && !(stof(value1) != stof(value2))) ||
+                                        (log == SEQL && !(value1 == value2)) || (log == SNEQ && !(value1 != value2));
                         }
-                        catch (const std::invalid_argument& ia)
+                        catch (const std::invalid_argument &ia)
                         {
                             cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
 
@@ -715,7 +726,7 @@ int main(int argc, char **argv)
                             line_num = stoi(token) - 1;
                         }
                     }
-                    catch (const std::invalid_argument& ia)
+                    catch (const std::invalid_argument &ia)
                     {
                         cout << "Index Error: Line " << line_num + 1 << ": Invalid jump index!" << endl;
 
@@ -724,7 +735,7 @@ int main(int argc, char **argv)
 
                         exit(1);
                     }
-                    catch (const std::out_of_range& oor)
+                    catch (const std::out_of_range &oor)
                     {
                         cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -762,13 +773,13 @@ int main(int argc, char **argv)
                                 val = memory[token];
                             else
                                 val = token;
-                            
+
                             update_map(memory, arr_name + "(" + index + ")", val);
 
                             break;
                         }
                     }
-                    catch (const std::invalid_argument& ia)
+                    catch (const std::invalid_argument &ia)
                     {
                         cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
 
@@ -804,7 +815,7 @@ int main(int argc, char **argv)
                             break;
                         }
                     }
-                    catch (const std::invalid_argument& ia)
+                    catch (const std::invalid_argument &ia)
                     {
                         cout << "Type Error: Line " << line_num + 1 << ": Index should be integer only!" << endl;
 
@@ -821,12 +832,12 @@ int main(int argc, char **argv)
                     if (token.at(0) == '&')
                     {
                         string var;
-                        
+
                         try
                         {
                             var = "$" + token.substr(1);
                         }
-                        catch (const std::out_of_range& oor)
+                        catch (const std::out_of_range &oor)
                         {
                             cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -884,16 +895,17 @@ int main(int argc, char **argv)
                                 num_of_cats = stoi(token);
                             }
                         }
-                        catch (const std::invalid_argument& ia)
+                        catch (const std::invalid_argument &ia)
                         {
-                            cout << "Type Error: Line " << line_num + 1 << ": Number of strings to concatenate should be integer only!" << endl;
+                            cout << "Type Error: Line " << line_num + 1
+                                 << ": Number of strings to concatenate should be integer only!" << endl;
 
                             file.close();
                             remove_file(tmp);
 
                             exit(1);
                         }
-                        catch (const std::out_of_range& oor)
+                        catch (const std::out_of_range &oor)
                         {
                             cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -919,7 +931,7 @@ int main(int argc, char **argv)
                             {
                                 var = "$" + token.substr(1);
                             }
-                            catch (const std::out_of_range& oor)
+                            catch (const std::out_of_range &oor)
                             {
                                 cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
@@ -944,7 +956,7 @@ int main(int argc, char **argv)
                         }
 
                         string_sum += str;
-                        
+
                         if (i == num_of_cats + 2)
                         {
                             update_map(memory, key, string_sum);
@@ -961,7 +973,7 @@ int main(int argc, char **argv)
                     {
                         exit(stoi(token));
                     }
-                    catch (const std::invalid_argument& ia)
+                    catch (const std::invalid_argument &ia)
                     {
                         cout << "Type Error: Line " << line_num + 1 << ": Exit code should be integer only!" << endl;
                         exit(1);
@@ -980,6 +992,6 @@ int main(int argc, char **argv)
 
     // Deleting the copied tmp file
     remove_file(tmp);
-    
+
     return 0;
 }

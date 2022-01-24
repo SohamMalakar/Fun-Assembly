@@ -90,34 +90,29 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 25 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 20 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
-The 25 Keywords with their functions are provided here:
+The 20 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
 | `PRT`    | Prints the tokens                                 |
 | `SCN`    | Takes inputs from the keyboard                    |
+| `SCNL`   | Takes inputs upto the next newline character      |
 | `MOV`    | Assigns a value to a variable                     |
 | `INT`    | Converts a variable to an integer                 |
 | `ADD`    | Adds two variables                                |
 | `SUB`    | Subtracts two variables                           |
 | `MUL`    | Multiplies two variables                          |
 | `DIV`    | Divides two variables                             |
-| `MOD`    | Modulo of two variables                           | 
-| `POW`    | Raises a variable to the given power              | 
+| `MOD`    | Modulo of two variables                           |
+| `POW`    | Raises a variable to the given power              |
 | `IF`     | If the condition is true, executes the block      |
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
 | `ARR`    | Assigns a value to an array                       |
 | `ARRV`   | Assigns the element's value into another variable |
 | `BYE`    | Exits the program                                 |
-| `ENDL`   | Prints a new line                                 | 
-| `TAB`    | Prints a tab                                      |
-| `SPC`    | Prints a space                                    |
-| `EXL`    | Prints an exclamation mark                        |
-| `DOL`    | Prints a dollar sign                              |
-| `AMP`    | Prints an ampersand                               |
 | `!`      | Comments out any text                             |
 | `STR`    | Stores strings as character arrays                |
 | `CAT`    | Concatenates strings                              |
@@ -190,6 +185,14 @@ SCN $var1
 
 Here, the compiler takes input from the keyboard and assign it to the variable `$var1`.
 And multiple inputs can be taken at once.
+
+Now, to take input upto the next newline character, we use the keyword `SCNL`.
+
+```
+SCNL $var1
+```
+
+Here, the compiler takes input upto the next newline character from the keyboard and assign it to the variable `$var1`.
 
 ---
 
@@ -284,15 +287,17 @@ If they are not equal, the compiler exits the loop.
 
 ### Printing Special Characters
 
-Now, to print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we use the keywords `ENDL`, `TAB`, `SPC`, `EXL`, `DOL`, `AMP`.
+Now, to print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we print (`PRT`) these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP` respectively.
 
 ```
 PRT Hello World
-EXL
-ENDL
+PRT $EXL
+PRT $ENDL
 ```
 
 It prints 'Hello World!\n'.
+
+> **_NOTE:_** Other special characters can be printed by using `PRT` with the character itself. For example, `PRT %` prints a percent sign.
 
 ---
 
@@ -332,6 +337,7 @@ _Method 2:_
 ```
 PRT $array(0)
 ```
+
 Here, the compiler prints the value of the element at the index `$index` of the array `$array`.
 
 This way of printing an array is not recommended because it's hard coded.

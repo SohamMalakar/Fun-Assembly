@@ -19,7 +19,7 @@ IF LEQ $I $N
 ]
 
 PRT The result for $N is $SUM
-ENDL
+PRT $ENDL
 
 JMP $SKIP
 

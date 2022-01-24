@@ -6,7 +6,7 @@ IF LSS $I $ARGC
 [
     INT $I $I
     PRT &I
-    ENDL
+    PRT $ENDL
 
     ADD $I $I 1
 

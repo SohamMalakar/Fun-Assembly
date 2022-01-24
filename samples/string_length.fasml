@@ -1,6 +1,6 @@
 
 PRT Enter your name:
-SPC
+PRT $SPC
 SCN $name
 
 STR $name
@@ -20,9 +20,9 @@ IF SNEQ $c NULL
 MOV $len $i
 
 PRT The length of $name is $len
-ENDL
+PRT $ENDL
 
 CAT 2 $concat Hello, $name
 
 PRT $concat
-ENDL
+PRT $ENDL
