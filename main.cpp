@@ -30,6 +30,7 @@ typedef enum
     IF,
     JMP,
     ARR,  /* Store data in array */
+    ARRI, /* Initialize array */
     ARRV, /* Access value in array */
     BYE,  /* Exit */
     STR,  /* Store strings as char arrays */
@@ -287,6 +288,8 @@ outer:
                     op = JMP;
                 else if (token == "ARR")
                     op = ARR;
+                else if (token == "ARRI")
+                    op = ARRI;
                 else if (token == "ARRV")
                     op = ARRV;
                 else if (token == "STR")
@@ -782,6 +785,38 @@ outer:
                     catch (const std::invalid_argument &ia)
                     {
                         cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
+                    }
+                }
+                else if (op == ARRI)
+                {
+                    try
+                    {
+                        if (i == 1)
+                        {
+                            arr_name = token;
+                        }
+                        else
+                        {
+                            // Find the value
+                            if (token.at(0) == '$')
+                                val = memory[token];
+                            else if (token.at(0) == '&')
+                                val = memory["$" + memory["$" + token.substr(1)]];
+                            else
+                                val = token;
+
+                            // Assign the value
+                            update_map(memory, arr_name + "(" + to_string(i - 2) + ")", val);
+                        }
+                    }
+                    catch (const out_of_range &oor)
+                    {
+                        cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
 
                         file.close();
                         remove_file(tmp);

@@ -90,9 +90,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 20 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 21 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
-The 20 Keywords with their functions are provided here:
+The 21 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -111,6 +111,7 @@ The 20 Keywords with their functions are provided here:
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
 | `ARR`    | Assigns a value to an array                       |
+| `ARRI`   | Initializes an array                              |
 | `ARRV`   | Assigns the element's value into another variable |
 | `BYE`    | Exits the program                                 |
 | `!`      | Comments out any text                             |
@@ -310,6 +311,14 @@ ARR $array $index $value
 ```
 
 Here, the compiler assigns the value `$value` to the array `$array` at the index `$index`.
+
+To initialize an array, we use the keyword `ARRI`.
+
+```
+ARRI $array 1 2 3 4 5
+```
+
+Here, the compiler initializes the array `$array` with the values `1`, `2`, `3`, `4`, and `5`.
 
 To get the value of an array, we use the keyword `ARRV`.
 
