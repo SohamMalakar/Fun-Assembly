@@ -352,16 +352,14 @@ We can perform various string operations in this programming language. The langu
 `STR` keyword is used for storing the given string as a character array and add a `NULL` string at the end.
 
 ```
-PRT Enter your name with underscore separated words:
-SPC
-SCN $name
+PRT Enter your name:
+PRT $SPC
+SCNL $name
 
 STR $name
 ```
 
 The above code snippet takes a string as input and stores it as a string in the memory.
-
-> **_NOTE:_** As every space separated words are tokenized separately, it will only store one word as string. To avoid this problem we took the input separated by `_` or `underscore` character.
 
 ---
 
@@ -421,7 +419,7 @@ IF LSS $I $ARGC
 [
     INT $I $I
     PRT &I
-    ENDL
+    PRT $ENDL
 
     ADD $I $I 1
 
