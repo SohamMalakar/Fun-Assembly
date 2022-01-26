@@ -12,47 +12,52 @@
 
 using namespace std;
 
+// Precedence of operators
+#define PRECEDENCE(x)                                                                                                  \
+    ((x) == "+" || (x) == "-" ? 0 : ((x) == "*" || (x) == "/" || (x) == "%" ? 1 : ((x) == "^" ? 2 : -1)))
+
 /* comments: ! */
 
 typedef enum
 {
-    PRT,
-    SCN,  /* Take input upto next space */
-    SCNL, /* Take input upto next line */
-    MOV,
-    INT,
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    MOD,
-    POW,
-    IF,
-    JMP,
+    PRT,  /* Prints the tokens */
+    SCN,  /* Takes inputs upto next space */
+    SCNL, /* Takes inputs upto next line */
+    MOV,  /* Assigns a value to a variable */
+    INT,  /* Converts a variable to an integer */
+    ADD,  /* Adds two variables */
+    SUB,  /* Subtracts two variables */
+    MUL,  /* Multiplies two variables */
+    DIV,  /* Divides two variables */
+    MOD,  /* Modulo of two variables */
+    POW,  /* Raises a variable to the given power */
+    EXPR, /* Evaluates expression */
+    IF,   /* If condition is true, execute the block */
+    JMP,  /* Jumps to the given label */
     ARR,  /* Store data in array */
     ARRI, /* Initialize array */
-    ARRV, /* Access value in array */
-    BYE,  /* Exit */
+    ARRV, /* Accesses value in array */
+    BYE,  /* Exits the program */
     STR,  /* Store strings as char arrays */
-    CAT   /* String concatenation */
+    CAT   /* Concatenates strings */
 
 } op_code;
 
-/* op_code: >, ! */
+/* op_code: RPXE, >, ! */
 
 /* keyword: NULL */
 string NULL_OP("NULL");
 
 typedef enum
 {
-    EQL,
-    NEQ,
-    GTR,
-    LSS,
-    GEQ,
-    LEQ,
-    SEQL, /* Check if two strings are equal */
-    SNEQ  /* Check if two strings are not equal */
+    EQL,  /* == */
+    NEQ,  /* != */
+    GTR,  /* > */
+    LSS,  /* < */
+    GEQ,  /* >= */
+    LEQ,  /* <= */
+    SEQL, /* == for strings */
+    SNEQ  /* != for strings */
 
 } log_code;
 
@@ -82,6 +87,147 @@ void remove_file(string name)
 float modulo(float x, float y)
 {
     return x - y * floor(x / y);
+}
+
+/* template <typename T>
+void print_stack(stack<T> s, string &str)
+{
+    if (s.empty())
+        return;
+
+    T x = s.top();
+    s.pop();
+
+    print_stack(s, str);
+    str += x + " ";
+
+    s.push(x);
+} */
+
+template <typename T>
+void reverse_stack(stack<T> &s)
+{
+    stack<T> temp;
+
+    while (!s.empty())
+    {
+        T x = s.top();
+        s.pop();
+        temp.push(x);
+    }
+
+    s = temp;
+}
+
+// Assuming that the input is valid
+void evaluate_expression(string key, string &exp, unordered_map<string, string> &memory)
+{
+    // TODO: Check if the infix expression is valid
+    // Pass line number, file name and file pointer to the function
+
+    string token;
+
+    exp = "( " + exp + ")";
+
+    stringstream ss(exp);
+
+    stack<string> stk, postfix;
+
+    while (getline(ss, token, ' '))
+    {
+        if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^")
+        {
+            while (PRECEDENCE(stk.top()) >= PRECEDENCE(token))
+            {
+                postfix.push(stk.top());
+                stk.pop();
+            }
+
+            stk.push(token);
+        }
+        else if (token == "(")
+        {
+            stk.push(token);
+        }
+        else if (token == ")")
+        {
+            while (stk.top() != "(")
+            {
+                postfix.push(stk.top());
+                stk.pop();
+            }
+
+            stk.pop();
+        }
+        else
+        {
+            try
+            {
+                // Evaluate the token
+                if (token.at(0) == '$')
+                    postfix.push(memory[token]);
+                else if (token.at(0) == '&')
+                    postfix.push(memory["$" + memory["$" + token.substr(1)]]);
+                else
+                    postfix.push(token);
+            }
+            catch (const out_of_range &e)
+            {
+                cout << "Error: " << e.what() << endl;
+                exit(1);
+            }
+        }
+    }
+
+    reverse_stack(postfix);
+
+    // Evaluate the postfix expression
+    stack<double> eval;
+
+    while (!postfix.empty())
+    {
+        token = postfix.top();
+        postfix.pop();
+
+        if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^")
+        {
+            double y = eval.top();
+            eval.pop();
+            double x = eval.top();
+            eval.pop();
+
+            if (token == "+")
+                eval.push(x + y);
+            else if (token == "-")
+                eval.push(x - y);
+            else if (token == "*")
+                eval.push(x * y);
+            else if (token == "/")
+                eval.push(x / y);
+            else if (token == "%")
+                eval.push(modulo(x, y));
+            else if (token == "^")
+                eval.push(pow(x, y));
+        }
+        else
+        {
+            try
+            {
+                eval.push(stod(token));
+            }
+            catch (const invalid_argument &e)
+            {
+                cout << "Error: " << e.what() << endl;
+                exit(1);
+            }
+        }
+    }
+
+    // Update the memory
+    update_map(memory, key, to_string(eval.top()));
+
+    // Reset the expression
+    exp = "";
 }
 
 int main(int argc, char **argv)
@@ -164,6 +310,7 @@ int main(int argc, char **argv)
         stringstream ss;
         istringstream iss(line);
 
+        // Removes extra spaces
         copy(istream_iterator<string>(iss), istream_iterator<string>(), ostream_iterator<string>(ss, " "));
 
         int i = 0;
@@ -228,6 +375,7 @@ int main(int argc, char **argv)
     }
 
     string key, value1, value2;
+    string key_exp, exp;
 
     line_num = 0;
 
@@ -254,7 +402,8 @@ outer:
         {
             log_code log;
 
-            if (token.at(0) == '!') /* comment */
+            // Comments
+            if (token.at(0) == '!')
                 break;
 
             if (i == 0)
@@ -268,7 +417,7 @@ outer:
                     op = SCNL;
                 else if (token == "MOV")
                     op = MOV;
-                else if (token == "INT") /* cast to integer */
+                else if (token == "INT")
                     op = INT;
                 else if (token == "ADD")
                     op = ADD;
@@ -282,6 +431,10 @@ outer:
                     op = MOD;
                 else if (token == "POW")
                     op = POW;
+                else if (token == "EXPR")
+                    op = EXPR;
+                else if (token == "RPXE")
+                    evaluate_expression(key_exp, exp, memory);
                 else if (token == "IF")
                     op = IF;
                 else if (token == "JMP")
@@ -296,11 +449,11 @@ outer:
                     op = STR;
                 else if (token == "CAT")
                     op = CAT;
-                else if (token == "BYE") /* exit */
+                else if (token == "BYE")
                     op = BYE;
-                else if (token == ">") /* jump line */
+                else if (token == ">")
                     break;
-                else if (token == "[" || token == "]") /* ignore */
+                else if (token == "[" || token == "]")
                     break;
                 else
                 {
@@ -572,6 +725,18 @@ outer:
                         update_map(memory, key, to_string(result));
 
                         break; /* 4 tokens */
+                    }
+                }
+                else if (op == EXPR)
+                {
+                    if (i == 1)
+                    {
+                        key_exp = token;
+                    }
+                    else
+                    {
+                        // Create the infix expression
+                        exp += token + " ";
                     }
                 }
                 else if (op == IF)
