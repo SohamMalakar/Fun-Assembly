@@ -90,9 +90,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 21 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 23 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
-The 21 Keywords with their functions are provided here:
+The 23 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -107,6 +107,8 @@ The 21 Keywords with their functions are provided here:
 | `DIV`    | Divides two variables                             |
 | `MOD`    | Modulo of two variables                           |
 | `POW`    | Raises a variable to the given power              |
+| `EXPR`   | Evaluates an expression                           |
+| `RPXE`   | Terminator for the `EXPR` command                 |
 | `IF`     | If the condition is true, executes the block      |
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
@@ -212,6 +214,26 @@ Now, just replace `ADD` with `SUB`, `MUL`, `DIV`, `MOD`, and `POW` to get the re
 But it'll convert the variables to floats before performing the operation.
 
 ---
+
+### Expression Evaluation
+
+To evaluate an expression, we use the keyword `EXPR`.
+
+Consider the following code snippet:
+
+```
+MOV $var1 2
+MOV $var2 3
+
+EXPR $out ( $var1 + 5 ) * -10 / $var2
+RPXE
+
+PRT $out $ENDL
+```
+
+Here, the compiler evaluates the expression `( $var1 + 5 ) * -10 / $var2` and assign the result to the variable `$out`.
+
+And `RPXE` terminates the expression evaluation. Then, the compiler prints the value of the variable `$out`, which is `-23.333333` in this case.
 
 ### Integer Casting
 
