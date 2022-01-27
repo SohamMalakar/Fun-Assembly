@@ -149,7 +149,7 @@ PRT Hello World
 
 Here, the compiler prints the tokens 'Hello' and 'World'.
 Tokens are separated by spaces. The compiler will ignore the spaces.
-But it'll print the spaces explicitly.
+But it'll print the spaces in between the tokens.
 
 ---
 
