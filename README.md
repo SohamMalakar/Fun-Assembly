@@ -225,15 +225,16 @@ Consider the following code snippet:
 MOV $var1 2
 MOV $var2 3
 
-EXPR $out ( $var1 + 5 ) * -10 / $var2
-RPXE
+EXPR ( $var1 + 5 ) * -10 / $var2
+RPXE $out
 
 PRT $out $ENDL
 ```
 
-Here, the compiler evaluates the expression `( $var1 + 5 ) * -10 / $var2` and assign the result to the variable `$out`.
+Here, the compiler evaluates the expression `( $var1 + 5 ) * -10 / $var2` and `RPXE` stores the result in the variable `$out`.
+And prints the value of `$out` followed by a newline character.
 
-And `RPXE` terminates the expression evaluation. Then, the compiler prints the value of the variable `$out`, which is `-23.333333` in this case.
+---
 
 ### Integer Casting
 

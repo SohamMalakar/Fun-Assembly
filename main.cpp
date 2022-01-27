@@ -32,6 +32,7 @@ typedef enum
     MOD,  /* Modulo of two variables */
     POW,  /* Raises a variable to the given power */
     EXPR, /* Evaluates expression */
+    RPXE, /* Terminates the expression */
     IF,   /* If condition is true, execute the block */
     JMP,  /* Jumps to the given label */
     ARR,  /* Store data in array */
@@ -43,7 +44,7 @@ typedef enum
 
 } op_code;
 
-/* op_code: RPXE, >, ! */
+/* op_code: >, ! */
 
 /* keyword: NULL */
 string NULL_OP("NULL");
@@ -61,8 +62,7 @@ typedef enum
 
 } log_code;
 
-template <typename T1, typename T2>
-void update_map(unordered_map<T1, T2> &map, T1 key, T2 value)
+template <typename T1, typename T2> void update_map(unordered_map<T1, T2> &map, T1 key, T2 value)
 {
     auto itr = map.find(key);
 
@@ -89,23 +89,7 @@ float modulo(float x, float y)
     return x - y * floor(x / y);
 }
 
-/* template <typename T>
-void print_stack(stack<T> s, string &str)
-{
-    if (s.empty())
-        return;
-
-    T x = s.top();
-    s.pop();
-
-    print_stack(s, str);
-    str += x + " ";
-
-    s.push(x);
-} */
-
-template <typename T>
-void reverse_stack(stack<T> &s)
+template <typename T> void reverse_stack(stack<T> &s)
 {
     stack<T> temp;
 
@@ -117,117 +101,6 @@ void reverse_stack(stack<T> &s)
     }
 
     s = temp;
-}
-
-// Assuming that the input is valid
-void evaluate_expression(string key, string &exp, unordered_map<string, string> &memory)
-{
-    // TODO: Check if the infix expression is valid
-    // Pass line number, file name and file pointer to the function
-
-    string token;
-
-    exp = "( " + exp + ")";
-
-    stringstream ss(exp);
-
-    stack<string> stk, postfix;
-
-    while (getline(ss, token, ' '))
-    {
-        if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^")
-        {
-            while (PRECEDENCE(stk.top()) >= PRECEDENCE(token))
-            {
-                postfix.push(stk.top());
-                stk.pop();
-            }
-
-            stk.push(token);
-        }
-        else if (token == "(")
-        {
-            stk.push(token);
-        }
-        else if (token == ")")
-        {
-            while (stk.top() != "(")
-            {
-                postfix.push(stk.top());
-                stk.pop();
-            }
-
-            stk.pop();
-        }
-        else
-        {
-            try
-            {
-                // Evaluate the token
-                if (token.at(0) == '$')
-                    postfix.push(memory[token]);
-                else if (token.at(0) == '&')
-                    postfix.push(memory["$" + memory["$" + token.substr(1)]]);
-                else
-                    postfix.push(token);
-            }
-            catch (const out_of_range &e)
-            {
-                cout << "Error: " << e.what() << endl;
-                exit(1);
-            }
-        }
-    }
-
-    reverse_stack(postfix);
-
-    // Evaluate the postfix expression
-    stack<double> eval;
-
-    while (!postfix.empty())
-    {
-        token = postfix.top();
-        postfix.pop();
-
-        if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^")
-        {
-            double y = eval.top();
-            eval.pop();
-            double x = eval.top();
-            eval.pop();
-
-            if (token == "+")
-                eval.push(x + y);
-            else if (token == "-")
-                eval.push(x - y);
-            else if (token == "*")
-                eval.push(x * y);
-            else if (token == "/")
-                eval.push(x / y);
-            else if (token == "%")
-                eval.push(modulo(x, y));
-            else if (token == "^")
-                eval.push(pow(x, y));
-        }
-        else
-        {
-            try
-            {
-                eval.push(stod(token));
-            }
-            catch (const invalid_argument &e)
-            {
-                cout << "Error: " << e.what() << endl;
-                exit(1);
-            }
-        }
-    }
-
-    // Update the memory
-    update_map(memory, key, to_string(eval.top()));
-
-    // Reset the expression
-    exp = "";
 }
 
 int main(int argc, char **argv)
@@ -375,7 +248,7 @@ int main(int argc, char **argv)
     }
 
     string key, value1, value2;
-    string key_exp, exp;
+    string exp;
 
     line_num = 0;
 
@@ -434,7 +307,7 @@ outer:
                 else if (token == "EXPR")
                     op = EXPR;
                 else if (token == "RPXE")
-                    evaluate_expression(key_exp, exp, memory);
+                    op = RPXE;
                 else if (token == "IF")
                     op = IF;
                 else if (token == "JMP")
@@ -729,15 +602,225 @@ outer:
                 }
                 else if (op == EXPR)
                 {
-                    if (i == 1)
+                    try
                     {
-                        key_exp = token;
+                        // Create the expression
+                        if (token.at(0) == '$')
+                            exp += memory[token] + " ";
+                        else if (token.at(0) == '&')
+                            exp += memory["$" + memory["$" + token.substr(1)]] + " ";
+                        else
+                            exp += token + " ";
                     }
-                    else
+                    catch (const std::out_of_range &oor)
                     {
-                        // Create the infix expression
-                        exp += token + " ";
+                        cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
                     }
+                }
+                else if (op == RPXE)
+                {
+                    string tok;
+
+                    exp = "( " + exp + ")";
+
+                    stringstream ss_exp(exp);
+
+                    int parentheses_count = 0;
+                    int operator_count = 0;
+                    int operand_count = 0;
+                    int j = 0;
+
+                    while (getline(ss_exp, tok, ' '))
+                    {
+                        if (tok == "(")
+                        {
+                            parentheses_count++;
+                        }
+                        else if (tok == ")")
+                        {
+                            parentheses_count--;
+                        }
+                        else if (tok == "+" || tok == "-" || tok == "*" || tok == "/" || tok == "%" || tok == "^")
+                        {
+                            if (j % 2 == 1)
+                            {
+                                operator_count++;
+                            }
+                            else
+                            {
+                                cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+
+                            j++;
+                        }
+                        else
+                        {
+                            if (j % 2 == 0)
+                            {
+                                // check if operand is a number
+                                stringstream ss_num(tok);
+                                double num;
+                                ss_num >> num;
+
+                                if (ss_num.fail())
+                                {
+                                    cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+
+                                    file.close();
+                                    remove_file(tmp);
+
+                                    exit(1);
+                                }
+
+                                operand_count++;
+                            }
+                            else
+                            {
+                                cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
+                                exit(1);
+                            }
+
+                            j++;
+                        }
+
+                        if (parentheses_count < 0)
+                        {
+                            cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+
+                            file.close();
+                            remove_file(tmp);
+
+                            exit(1);
+                        }
+                    }
+
+                    if (parentheses_count != 0)
+                    {
+                        cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
+                    }
+
+                    if (operator_count != operand_count - 1)
+                    {
+                        cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+
+                        file.close();
+                        remove_file(tmp);
+
+                        exit(1);
+                    }
+
+                    stack<string> stk, postfix;
+
+                    ss_exp.clear();
+                    ss_exp.seekg(0);
+
+                    while (getline(ss_exp, tok, ' '))
+                    {
+                        if (tok == "+" || tok == "-" || tok == "*" || tok == "/" || tok == "%" || tok == "^")
+                        {
+                            while (PRECEDENCE(stk.top()) >= PRECEDENCE(tok))
+                            {
+                                postfix.push(stk.top());
+                                stk.pop();
+                            }
+
+                            stk.push(tok);
+                        }
+                        else if (tok == "(")
+                        {
+                            stk.push(tok);
+                        }
+                        else if (tok == ")")
+                        {
+                            bool found_element = false;
+
+                            while (stk.top() != "(")
+                            {
+                                postfix.push(stk.top());
+                                stk.pop();
+                                found_element = true;
+                            }
+
+                            if (found_element)
+                                stk.pop();
+                            else
+                            {
+                                cout << "Invalid expression" << endl;
+                                exit(1);
+                            }
+                        }
+                        else
+                        {
+                            postfix.push(tok);
+                        }
+                    }
+
+                    reverse_stack(postfix);
+
+                    // Evaluate the postfix expression
+                    stack<double> eval;
+
+                    while (!postfix.empty())
+                    {
+                        tok = postfix.top();
+                        postfix.pop();
+
+                        if (tok == "+" || tok == "-" || tok == "*" || tok == "/" || tok == "%" || tok == "^")
+                        {
+                            double op2 = eval.top();
+                            eval.pop();
+                            double op1 = eval.top();
+                            eval.pop();
+
+                            double result;
+
+                            if (tok == "+")
+                                result = op1 + op2;
+                            else if (tok == "-")
+                                result = op1 - op2;
+                            else if (tok == "*")
+                                result = op1 * op2;
+                            else if (tok == "/")
+                                result = op1 / op2;
+                            else if (tok == "%")
+                                result = modulo(op1, op2);
+                            else if (tok == "^")
+                                result = pow(op1, op2);
+
+                            eval.push(result);
+                        }
+                        else
+                        {
+                            eval.push(stod(tok));
+                        }
+                    }
+
+                    // Store the result in the hashtable
+                    update_map(memory, token, to_string(eval.top()));
+
+                    // Reset the expression
+                    exp = "";
+
+                    break; /* 2 tokens */
                 }
                 else if (op == IF)
                 {
