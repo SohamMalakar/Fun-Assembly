@@ -37,7 +37,7 @@ It is a Procedure Oriented Programming Language which uses a simple expression e
 
 ## Installation
 
-There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/tag/v1.1.0) section.
+There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/tag/v1.2.0) section.
 If you don't find any suitable version for your system, please compile it manually.
 
 > **_NOTE:_** Make sure you have the latest g++ compiler installed in your system.
@@ -287,7 +287,7 @@ If they are not equal (else), the compiler prints 'FAILURE' and jump to the labe
 
 There is no ELSE keyword. So, this is the only way to implement if-else statements.
 
-Now, replace the second token `EQL` with the other logical operators to get the desired condition.
+To get the desired condition, replace the `EQL` with the other logical operators.
 
 ---
 
