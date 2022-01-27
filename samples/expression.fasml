@@ -1,0 +1,8 @@
+
+MOV $five 5
+MOV $two 2
+
+EXPR ( $five + 7 - $two ) / 2
+RPXE $out
+
+PRT $out $ENDL

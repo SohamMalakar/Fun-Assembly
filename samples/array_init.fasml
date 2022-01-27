@@ -1,0 +1,19 @@
+
+! Initialize the array
+
+MOV $four 4
+MOV $two 2
+
+ARRI $arr 9 8 7 6 5 $four 3 &two $1 0
+
+MOV $size 10
+MOV $i 0
+
+> $loop
+IF LSS $i $size
+[
+    ARRV $a $arr $i
+    PRT $a $ENDL
+    ADD $i $i 1
+    JMP $loop
+]

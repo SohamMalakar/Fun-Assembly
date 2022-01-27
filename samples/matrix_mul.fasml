@@ -1,0 +1,148 @@
+
+! Matrix Multiplication
+
+PRT Enter matrix A's dimensions:
+SCN $row1 $col1
+
+PRT Enter matrix B's dimensions:
+SCN $row2 $col2
+
+! Check if the dimensions are compatible
+IF NEQ $col1 $row2
+[
+    PRT The dimensions are not compatible. $ENDL
+    BYE 1 ! Error code 1
+]
+
+! Enter matrix A
+PRT Enter matrix A: $ENDL
+
+MOV $i 0
+
+> $outer1
+IF LSS $i $row1
+[
+    MOV $j 0
+
+    > $inner1
+    IF LSS $j $col1
+    [
+        SCN $element
+
+        MUL $index $i $col1
+        ADD $index $index $j
+
+        ARR $matrixA $index $element
+
+        ADD $j $j 1
+        JMP $inner1
+    ]
+
+    ADD $i $i 1
+    JMP $outer1
+]
+
+! Enter matrix B
+PRT Enter matrix B: $ENDL
+
+MOV $i 0
+
+> $outer2
+IF LSS $i $row2
+[
+    MOV $j 0
+
+    > $inner2
+    IF LSS $j $col2
+    [
+        SCN $element
+
+        MUL $index $i $col2
+        ADD $index $index $j
+
+        ARR $matrixB $index $element
+
+        ADD $j $j 1
+        JMP $inner2
+    ]
+
+    ADD $i $i 1
+    JMP $outer2
+]
+
+! Result matrix
+MOV $i 0
+
+> $outer3
+IF LSS $i $row1
+[
+    MOV $j 0
+
+    > $inner3
+    IF LSS $j $col2
+    [
+        MOV $k 0
+        
+        MUL $index $i $col2
+        ADD $index $index $j
+
+        MOV $sum 0
+
+        > $inner4
+        IF LSS $k $col1
+        [
+            MUL $index1 $i $col1
+            ADD $index1 $index1 $k
+
+            MUL $index2 $k $col2
+            ADD $index2 $index2 $j
+
+            ARRV $val1 $matrixA $index1
+            ARRV $val2 $matrixB $index2
+
+            MUL $val $val1 $val2
+            ADD $sum $sum $val
+
+            ADD $k $k 1
+            JMP $inner4
+        ]
+
+        INT $sum $sum
+        ARR $matrixC $index $sum
+        ADD $j $j 1
+        JMP $inner3
+    ]
+
+    ADD $i $i 1
+    JMP $outer3
+]
+
+! Print result matrix
+PRT Result matrix: $ENDL
+
+MOV $i 0
+
+> $outer
+IF LSS $i $row1
+[
+    MOV $j 0
+
+    > $inner
+    IF LSS $j $col2
+    [
+        MUL $index $i $col2
+        ADD $index $index $j
+
+        ARRV $val $matrixC $index
+        PRT $val
+        PRT $SPC
+
+        ADD $j $j 1
+        JMP $inner
+    ]
+
+    PRT $ENDL
+
+    ADD $i $i 1
+    JMP $outer
+]

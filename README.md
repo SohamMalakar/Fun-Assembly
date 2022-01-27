@@ -37,7 +37,7 @@ It is a Procedure Oriented Programming Language which uses a simple expression e
 
 ## Installation
 
-There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/tag/v1.1.0) section.
+There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/tag/v1.2.0) section.
 If you don't find any suitable version for your system, please compile it manually.
 
 > **_NOTE:_** Make sure you have the latest g++ compiler installed in your system.
@@ -90,9 +90,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 20 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 23 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
-The 20 Keywords with their functions are provided here:
+The 23 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -107,10 +107,13 @@ The 20 Keywords with their functions are provided here:
 | `DIV`    | Divides two variables                             |
 | `MOD`    | Modulo of two variables                           |
 | `POW`    | Raises a variable to the given power              |
+| `EXPR`   | Evaluates an expression                           |
+| `RPXE`   | Terminator for the `EXPR` command                 |
 | `IF`     | If the condition is true, executes the block      |
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
 | `ARR`    | Assigns a value to an array                       |
+| `ARRI`   | Initializes an array                              |
 | `ARRV`   | Assigns the element's value into another variable |
 | `BYE`    | Exits the program                                 |
 | `!`      | Comments out any text                             |
@@ -146,7 +149,7 @@ PRT Hello World
 
 Here, the compiler prints the tokens 'Hello' and 'World'.
 Tokens are separated by spaces. The compiler will ignore the spaces.
-But it'll print the spaces explicitly.
+But it'll print the spaces in between the tokens.
 
 ---
 
@@ -212,6 +215,27 @@ But it'll convert the variables to floats before performing the operation.
 
 ---
 
+### Expression Evaluation
+
+To evaluate an expression, we use the keyword `EXPR`.
+
+Consider the following code snippet:
+
+```
+MOV $var1 2
+MOV $var2 3
+
+EXPR ( $var1 + 5 ) * -10 / $var2
+RPXE $out
+
+PRT $out $ENDL
+```
+
+Here, the compiler evaluates the expression `( $var1 + 5 ) * -10 / $var2` and `RPXE` stores the result in the variable `$out`.
+And prints the value of `$out` followed by a newline character.
+
+---
+
 ### Integer Casting
 
 To convert a variable to integer, we use the keyword `INT`.
@@ -263,7 +287,7 @@ If they are not equal (else), the compiler prints 'FAILURE' and jump to the labe
 
 There is no ELSE keyword. So, this is the only way to implement if-else statements.
 
-Now, replace the second token `EQL` with the other logical operators to get the desired condition.
+To get the desired condition, replace the `EQL` with the other logical operators.
 
 ---
 
@@ -310,6 +334,14 @@ ARR $array $index $value
 ```
 
 Here, the compiler assigns the value `$value` to the array `$array` at the index `$index`.
+
+To initialize an array, we use the keyword `ARRI`.
+
+```
+ARRI $array 1 2 3 4 5
+```
+
+Here, the compiler initializes the array `$array` with the values `1`, `2`, `3`, `4`, and `5`.
 
 To get the value of an array, we use the keyword `ARRV`.
 
