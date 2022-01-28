@@ -29,8 +29,8 @@ IF LSS $i $row1
     [
         SCN $element
 
-        MUL $index $i $col1
-        ADD $index $index $j
+        EXPR $i * $col1 + $j
+        RPXE $index
 
         ARR $matrixA $index $element
 
@@ -57,8 +57,8 @@ IF LSS $i $row2
     [
         SCN $element
 
-        MUL $index $i $col2
-        ADD $index $index $j
+        EXPR $i * $col2 + $j
+        RPXE $index
 
         ARR $matrixB $index $element
 
@@ -91,17 +91,17 @@ IF LSS $i $row1
         > $inner4
         IF LSS $k $col1
         [
-            MUL $index1 $i $col1
-            ADD $index1 $index1 $k
+            EXPR $i * $col1 + $k
+            RPXE $index1
 
-            MUL $index2 $k $col2
-            ADD $index2 $index2 $j
+            EXPR $k * $col2 + $j
+            RPXE $index2
 
             ARRV $val1 $matrixA $index1
             ARRV $val2 $matrixB $index2
 
-            MUL $val $val1 $val2
-            ADD $sum $sum $val
+            EXPR $sum + $val1 * $val2
+            RPXE $sum
 
             ADD $k $k 1
             JMP $inner4
@@ -130,8 +130,8 @@ IF LSS $i $row1
     > $inner
     IF LSS $j $col2
     [
-        MUL $index $i $col2
-        ADD $index $index $j
+        EXPR $i * $col2 + $j
+        RPXE $index
 
         ARRV $val $matrixC $index
         PRT $val

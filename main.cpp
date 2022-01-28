@@ -626,9 +626,10 @@ outer:
                 {
                     string tok;
 
-                    exp = "( " + exp + ")";
-
-                    stringstream ss_exp(exp);
+                    stringstream ss_exp;
+                    istringstream iss_exp(exp);
+                    copy(istream_iterator<string>(iss_exp), istream_iterator<string>(),
+                         ostream_iterator<string>(ss_exp, " "));
 
                     int parentheses_count = 0;
                     int operator_count = 0;
@@ -653,7 +654,7 @@ outer:
                             }
                             else
                             {
-                                cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+                                cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
 
                                 file.close();
                                 remove_file(tmp);
@@ -674,7 +675,7 @@ outer:
 
                                 if (ss_num.fail())
                                 {
-                                    cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
 
                                     file.close();
                                     remove_file(tmp);
@@ -686,7 +687,7 @@ outer:
                             }
                             else
                             {
-                                cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+                                cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
 
                                 file.close();
                                 remove_file(tmp);
@@ -699,7 +700,7 @@ outer:
 
                         if (parentheses_count < 0)
                         {
-                            cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+                            cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
 
                             file.close();
                             remove_file(tmp);
@@ -710,7 +711,7 @@ outer:
 
                     if (parentheses_count != 0)
                     {
-                        cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+                        cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
 
                         file.close();
                         remove_file(tmp);
@@ -720,7 +721,7 @@ outer:
 
                     if (operator_count != operand_count - 1)
                     {
-                        cout << "Error: Line " << line_num + 1 << ": Invalid expression!" << endl;
+                        cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
 
                         file.close();
                         remove_file(tmp);
@@ -737,7 +738,7 @@ outer:
                     {
                         if (tok == "+" || tok == "-" || tok == "*" || tok == "/" || tok == "%" || tok == "^")
                         {
-                            while (PRECEDENCE(stk.top()) >= PRECEDENCE(tok))
+                            while (!stk.empty() && PRECEDENCE(stk.top()) >= PRECEDENCE(tok))
                             {
                                 postfix.push(stk.top());
                                 stk.pop();
@@ -764,7 +765,11 @@ outer:
                                 stk.pop();
                             else
                             {
-                                cout << "Invalid expression" << endl;
+                                cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                file.close();
+                                remove_file(tmp);
+
                                 exit(1);
                             }
                         }
@@ -772,6 +777,12 @@ outer:
                         {
                             postfix.push(tok);
                         }
+                    }
+
+                    while (!stk.empty())
+                    {
+                        postfix.push(stk.top());
+                        stk.pop();
                     }
 
                     reverse_stack(postfix);

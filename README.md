@@ -270,20 +270,20 @@ To implement if-else statements, we use the keywords `IF` and `JMP`.
 IF EQL $var1 $var2
 [
     PRT SUCCESS
-    JMP $TERMINATE
+    JMP $END
 ]
 IF NEQ $var1 $var2
 [
     PRT FAILURE
-    JMP $TERMINATE
+    JMP $END
 ]
 
-> $TERMINATE
+> $END
 ```
 
 Here, the compiler checks if the values of the variables `$var1` and `$var2` are equal.
-If they are equal, the compiler prints 'SUCCESS' and jump to the label `$TERMINATE`.
-If they are not equal (else), the compiler prints 'FAILURE' and jump to the label `$TERMINATE`.
+If they are equal, the compiler prints 'SUCCESS' and jump to the label `$END`.
+If they are not equal (else), the compiler prints 'FAILURE' and jump to the label `$END`.
 
 There is no ELSE keyword. So, this is the only way to implement if-else statements.
 
