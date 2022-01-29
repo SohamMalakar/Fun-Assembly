@@ -30,49 +30,54 @@ It is a Procedure Oriented Programming Language which uses a simple expression e
 
 ## Disadvantages
 
-- Same variable name can't be used anywhere.
+- There is no scope for variables. So, unique names are required for variables.
 - It doesn't support structures and file handling.
 
 ---
 
 ## Installation
 
-There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/latest) section.
-If you don't find any suitable version for your system, please compile it manually.
-
-> **_NOTE:_** Make sure you have the latest g++ compiler installed in your system.
+There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/latest) section. If you don't find any suitable version for your system, please compile it manually.
 
 ### Windows
 
-A batch script is provided for compiling the program in the repository.
+1. Download the files from [here](https://github.com/SohamMalakar/Fun-Assembly/archive/refs/heads/master.zip).
 
-1. Compile the file by runnning the batch script `build.bat`
+2. Extract the files. (**_NOTE:_** You can extract the files using [7-Zip](https://www.7-zip.org/) or any other program)
 
-2. Now run the code using `fasml.exe`
+3. Run the `build.bat` script. It will compile the program and create a `fasml.exe` file.
+
+4. Open the command prompt in the folder where the `fasml.exe` file is present.
+
+5. Now, type the following command to run the program.
 
 ```
 > fasml.exe [FILENAME]
 ```
 
-Here [FILENAME] refers to the `.fasml` file you want to compile.
+Here, [FILENAME] refers to the `.fasml` file you want to compile.
 
-### Linux/Unix/MacOS/Windows WSL
+> **_NOTE:_** Make sure you have the latest [g++](https://winlibs.com/) compiler installed in your system.
 
-The Makefile for this compiler is provided in the repository.
+### GNU/Linux
 
-1. Compile the file using `make`
+Run the following commands to compile the program.
 
 ```
+$ git clone https://github.com/SohamMalakar/Fun-Assembly.git
+$ cd Fun-Assembly
 $ make
 ```
 
-2. Now run the code using `fasml`
+Now, you can run the program by typing the following command.
 
 ```
 $ ./fasml [FILENAME]
 ```
 
-Here [FILENAME] refers to the `.fasml` file you want to compile.
+Here, [FILENAME] refers to the `.fasml` file you want to compile.
+
+> **_NOTE:_** Make sure you have git, make and g++ installed in your system.
 
 ---
 
@@ -122,16 +127,16 @@ The 23 Keywords with their functions are provided here:
 
 The 8 Logical Operators with their meanings are provided here:
 
-| Logical Operators | Description                                       |
-| ----------------- | ------------------------------------------------- |
-| `EQL`             | Check if two variables are equal                  |
-| `NEQ`             | Check if two variables are not equal              |
-| `LSS`             | Check if one variable is less than another        |
-| `LEQ`             | Check if one variable is less than or equal to    |
-| `GTR`             | Check if one variable is greater than another     |
-| `GEQ`             | Check if one variable is greater than or equal to |
-| `SEQL`            | Check if two strings are equal                    |
-| `SNEQ`            | Check if two strings are not equal                |
+| Logical Operators | Description                                                         |
+| ----------------- | ------------------------------------------------------------------- |
+| `EQL`             | Checks if the two variables are equal                               |
+| `NEQ`             | Checks if the two variables are not equal                           |
+| `LSS`             | Checks if the first variable is less than the second                |
+| `LEQ`             | Checks if the first variable is less than or equal to the second    |
+| `GTR`             | Checks if the first variable is greater than the second             |
+| `GEQ`             | Checks if the first variable is greater than or equal to the second |
+| `SEQL`            | Checks if the two strings are equal                                 |
+| `SNEQ`            | Checks if the two strings are not equal                             |
 
 ---
 
@@ -175,6 +180,22 @@ PRT $var1
 ```
 
 And yes. You can print multiple variables at once.
+
+---
+
+### Printing Special Characters
+
+Now, to print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we print (`PRT`) these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP` respectively.
+
+```
+PRT Hello World
+PRT $EXL
+PRT $ENDL
+```
+
+It prints 'Hello World!\n'.
+
+> **_NOTE:_** Other special characters can be printed by using `PRT` with the character itself. For example, `PRT %` prints a percent sign.
 
 ---
 
@@ -293,7 +314,7 @@ To get the desired condition, replace the `EQL` with the other logical operators
 
 ### Loops
 
-To implement loops, we use the keyword `JMP` with `label`s.
+To implement loops, we use the keyword `JMP` with `labels`.
 
 ```
 > $LOOP
@@ -306,22 +327,6 @@ IF EQL $var1 $var2
 Here, the compiler checks if the values of the variables `$var1` and `$var2` are equal.
 If they are equal, the compiler jumps back to the label `$LOOP`.
 If they are not equal, the compiler exits the loop.
-
----
-
-### Printing Special Characters
-
-Now, to print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we print (`PRT`) these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP` respectively.
-
-```
-PRT Hello World
-PRT $EXL
-PRT $ENDL
-```
-
-It prints 'Hello World!\n'.
-
-> **_NOTE:_** Other special characters can be printed by using `PRT` with the character itself. For example, `PRT %` prints a percent sign.
 
 ---
 
@@ -470,8 +475,7 @@ Then, we increment the value of the variable `$I` by 1.
 
 Finally, we jump back to the label `$LOOP`.
 
-If we look closely,we find it's `PRT` followed by `&I`. It means that we grab the value of the variable `$I` and put a extra `$` before it.
-So, the interpreter will print the value of `$0`, `$1`, `$2`, and so on.
+If we look closely,we find it's `PRT` followed by `&I`. It means that we grab the value of the variable `$I` and put a extra `$` before it. So, the interpreter will print the value of `$0`, `$1`, `$2`, and so on.
 
 You can also print them in the following way:
 
