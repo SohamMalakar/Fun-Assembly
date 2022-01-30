@@ -103,6 +103,11 @@ template <typename T> void reverse_stack(stack<T> &s)
     s = temp;
 }
 
+bool is_operator(char c)
+{
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^';
+}
+
 int main(int argc, char **argv)
 {
     if (argc < 2)
@@ -624,6 +629,160 @@ outer:
                 }
                 else if (op == RPXE)
                 {
+                    bool is_num = false;
+                    bool dot_found = false;
+
+                    string s = "";
+                    string new_exp = "";
+
+                    int j = 0;
+                    int len = exp.length();
+
+                    // lexical analysis
+                    for (int i = 0; i < len; i++)
+                    {
+                        char c = exp.at(i);
+
+                        if (c != '(' && c != ')' && c != ' ')
+                        {
+                            if (c == '+' || c == '-')
+                            {
+                                if (j % 2 == 0)
+                                {
+                                    // unary operator
+                                    is_num = true;
+                                    s += c;
+
+                                    if (is_operator(exp.at(i + 1)) || exp.at(i + 1) == ' ')
+                                    {
+                                        cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                        file.close();
+                                        remove_file(tmp);
+
+                                        exit(1);
+                                    }
+                                }
+                                else
+                                {
+                                    if (s != "")
+                                    {
+                                        new_exp += s + " ";
+                                        s = "";
+
+                                        // reset flags
+                                        is_num = false;
+                                        dot_found = false;
+                                    }
+
+                                    // binary operator
+                                    new_exp += c;
+                                    new_exp += " ";
+                                    j++;
+                                }
+                            }
+                            else if (c == '*' || c == '/' || c == '%' || c == '^')
+                            {
+                                if (j % 2 == 0)
+                                {
+                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                    file.close();
+                                    remove_file(tmp);
+
+                                    exit(1);
+                                }
+
+                                if (s != "")
+                                {
+                                    new_exp += s + " ";
+                                    s = "";
+
+                                    // reset flags
+                                    is_num = false;
+                                    dot_found = false;
+                                }
+
+                                // binary operator
+                                new_exp += c;
+                                new_exp += " ";
+                                j++;
+                            }
+                            else if (c == '.')
+                            {
+                                if (j % 2 == 1 || dot_found || is_operator(exp.at(i + 1)) || exp.at(i + 1) == ' ')
+                                {
+                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                    file.close();
+                                    remove_file(tmp);
+
+                                    exit(1);
+                                }
+
+                                s += c;
+
+                                // floating point
+                                is_num = true;
+                                dot_found = true;
+                            }
+                            else
+                            {
+                                if (j % 2 == 1)
+                                {
+                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                    file.close();
+                                    remove_file(tmp);
+
+                                    exit(1);
+                                }
+
+                                // digit
+                                is_num = true;
+
+                                s += c;
+
+                                if (is_operator(exp.at(i + 1)))
+                                {
+                                    // binary operator
+                                    j++;
+
+                                    // reset flags
+                                    is_num = false;
+                                    dot_found = false;
+
+                                    continue;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // parentheses or space
+                            if (s != "")
+                            {
+                                new_exp += s + " ";
+                                s = "";
+                                j++;
+
+                                // reset flags
+                                is_num = false;
+                                dot_found = false;
+                            }
+
+                            if (c != ' ')
+                            {
+                                new_exp += c;
+                                new_exp += " ";
+                            }
+                        }
+                    }
+
+                    if (s != "")
+                        new_exp += s;
+
+                    exp = new_exp;
+
                     string tok;
 
                     stringstream ss_exp;
@@ -634,7 +793,7 @@ outer:
                     int parentheses_count = 0;
                     int operator_count = 0;
                     int operand_count = 0;
-                    int j = 0;
+                    j = 0;
 
                     while (getline(ss_exp, tok, ' '))
                     {
