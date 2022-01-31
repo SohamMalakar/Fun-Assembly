@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <regex>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -634,6 +635,11 @@ outer:
 
                     string s = "";
                     string new_exp = "";
+
+                    smatch match;
+                    regex re("\\([ ]*([\\+|-]?[\\d.]+)[ ]*?\\)");
+                    regex_search(exp, match, re);
+                    exp = regex_replace(exp, re, match[1].str());
 
                     int j = 0;
                     int len = exp.length();
