@@ -95,9 +95,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 23 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 24 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
-The 23 Keywords with their functions are provided here:
+The 24 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
