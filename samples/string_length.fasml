@@ -1,5 +1,5 @@
 
-PRT Enter your name:
+PRT Enter your first name:
 PRT $SPC
 SCN $name
 
@@ -22,7 +22,8 @@ MOV $len $i
 PRT The length of $name is $len
 PRT $ENDL
 
-CAT 2 $concat Hello, $name
+CAT Hello, $name
+TAC $concat
 
 PRT $concat
 PRT $ENDL

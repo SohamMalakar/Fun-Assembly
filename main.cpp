@@ -41,7 +41,8 @@ typedef enum
     ARRV, /* Accesses value in array */
     BYE,  /* Exits the program */
     STR,  /* Store strings as char arrays */
-    CAT   /* Concatenates strings */
+    CAT,  /* Concatenates strings */
+    TAC   /* Terminates the concatenation */
 
 } op_code;
 
@@ -257,6 +258,7 @@ int main(int argc, char **argv)
     string exp;
 
     line_num = 0;
+    string string_sum = "";
 
 outer:
     while (getline(file, line))
@@ -273,9 +275,6 @@ outer:
         string arr_name;
         string index;
         string val;
-
-        string string_sum = "";
-        int num_of_cats = 0;
 
         while (getline(ss, token, ' '))
         {
@@ -328,6 +327,8 @@ outer:
                     op = STR;
                 else if (token == "CAT")
                     op = CAT;
+                else if (token == "TAC")
+                    op = TAC;
                 else if (token == "BYE")
                     op = BYE;
                 else if (token == ">")
@@ -1332,37 +1333,15 @@ outer:
                 }
                 else if (op == CAT)
                 {
-                    if (i == 1)
+                    string str;
+
+                    if (token.at(0) == '&')
                     {
-                        // Number of strings to concatenate
+                        string var;
+
                         try
                         {
-                            if (token.at(0) == '&')
-                            {
-                                string var = "$" + token.substr(1);
-                                string value = "$" + memory[var];
-
-                                // Do something with value
-                                num_of_cats = stoi(memory[value]);
-                            }
-                            else if (token.at(0) == '$')
-                            {
-                                num_of_cats = stoi(memory[token]);
-                            }
-                            else
-                            {
-                                num_of_cats = stoi(token);
-                            }
-                        }
-                        catch (const std::invalid_argument &ia)
-                        {
-                            cout << "Type Error: Line " << line_num + 1
-                                 << ": Number of strings to concatenate should be integer only!" << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
+                            var = "$" + token.substr(1);
                         }
                         catch (const std::out_of_range &oor)
                         {
@@ -1373,55 +1352,29 @@ outer:
 
                             exit(1);
                         }
+
+                        string value = "$" + memory[var];
+
+                        // Do something with value
+                        str = memory[value];
                     }
-                    else if (i == 2)
+                    else if (token.at(0) == '$')
                     {
-                        key = token;
+                        str = memory[token];
                     }
                     else
                     {
-                        string str;
-
-                        if (token.at(0) == '&')
-                        {
-                            string var;
-
-                            try
-                            {
-                                var = "$" + token.substr(1);
-                            }
-                            catch (const std::out_of_range &oor)
-                            {
-                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            str = memory[value];
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            str = memory[token];
-                        }
-                        else
-                        {
-                            str = token;
-                        }
-
-                        string_sum += str;
-
-                        if (i == num_of_cats + 2)
-                        {
-                            update_map(memory, key, string_sum);
-                            break;
-                        }
+                        str = token;
                     }
+
+                    string_sum += str;
+                }
+                else if (op == TAC)
+                {
+                    update_map(memory, token, string_sum);
+                    string_sum = "";
+
+                    break; /* 2 tokens */
                 }
                 else if (op == BYE)
                 {

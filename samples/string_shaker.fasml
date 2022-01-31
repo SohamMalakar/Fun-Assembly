@@ -14,7 +14,8 @@ ARRV $c2 $str2 $i
 
 IF SNEQ $c1 NULL
 [
-    CAT 3 $str3 $str3 $c1 $c2
+    CAT $str3 $c1 $c2
+    TAC $str3
 
     ADD $i $i 1
     INT $i $i
