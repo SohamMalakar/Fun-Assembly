@@ -95,9 +95,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 23 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 24 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
-The 23 Keywords with their functions are provided here:
+The 24 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -124,6 +124,7 @@ The 23 Keywords with their functions are provided here:
 | `!`      | Comments out any text                             |
 | `STR`    | Stores strings as character arrays                |
 | `CAT`    | Concatenates strings                              |
+| `TAC`    | Terminator for the `CAT` command                  |
 
 The 8 Logical Operators with their meanings are provided here:
 
@@ -405,10 +406,11 @@ The above code snippet takes a string as input and stores it as a string in the 
 To concatenate two or more strings together, we use the keyword `CAT`.
 
 ```
-CAT 2 $str3 $str1 $str2
+CAT $str1 $str2
+TAC $str3
 ```
 
-Here, we first specify the number of the strings to be concatenated immediately after the `CAT` keyword. After that we have three string variables `$str1`, `$str2` and `$str3`. The string `$str2` is concatenated with `$str1` and then it is stored into `$str3`.
+Here, the `CAT` keyword concatenates the strings `$str1` and `$str2`. And the `TAC` keyword stores the concatenated string in the variable `$str3`.
 
 ---
 

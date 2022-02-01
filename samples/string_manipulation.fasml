@@ -20,7 +20,8 @@ IF SNEQ $c NULL
     IF SEQL $c $SPC
     [
         ARRV $nc $name $i
-        CAT 2 $abb $abb $nc
+        CAT $abb $nc
+        TAC $abb
     ]
     
     JMP $loop1

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <regex>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -40,7 +41,8 @@ typedef enum
     ARRV, /* Accesses value in array */
     BYE,  /* Exits the program */
     STR,  /* Store strings as char arrays */
-    CAT   /* Concatenates strings */
+    CAT,  /* Concatenates strings */
+    TAC   /* Terminates the concatenation */
 
 } op_code;
 
@@ -101,6 +103,11 @@ template <typename T> void reverse_stack(stack<T> &s)
     }
 
     s = temp;
+}
+
+bool is_operator(char c)
+{
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^';
 }
 
 int main(int argc, char **argv)
@@ -251,6 +258,7 @@ int main(int argc, char **argv)
     string exp;
 
     line_num = 0;
+    string string_sum = "";
 
 outer:
     while (getline(file, line))
@@ -267,9 +275,6 @@ outer:
         string arr_name;
         string index;
         string val;
-
-        string string_sum = "";
-        int num_of_cats = 0;
 
         while (getline(ss, token, ' '))
         {
@@ -322,6 +327,8 @@ outer:
                     op = STR;
                 else if (token == "CAT")
                     op = CAT;
+                else if (token == "TAC")
+                    op = TAC;
                 else if (token == "BYE")
                     op = BYE;
                 else if (token == ">")
@@ -624,6 +631,165 @@ outer:
                 }
                 else if (op == RPXE)
                 {
+                    bool is_num = false;
+                    bool dot_found = false;
+
+                    string s = "";
+                    string new_exp = "";
+
+                    smatch match;
+                    regex re("\\([ ]*([\\+|-]?[\\d.]+)[ ]*?\\)");
+                    regex_search(exp, match, re);
+                    exp = regex_replace(exp, re, match[1].str());
+
+                    int j = 0;
+                    int len = exp.length();
+
+                    // lexical analysis
+                    for (int i = 0; i < len; i++)
+                    {
+                        char c = exp.at(i);
+
+                        if (c != '(' && c != ')' && c != ' ')
+                        {
+                            if (c == '+' || c == '-')
+                            {
+                                if (j % 2 == 0)
+                                {
+                                    // unary operator
+                                    is_num = true;
+                                    s += c;
+
+                                    if (is_operator(exp.at(i + 1)) || exp.at(i + 1) == ' ')
+                                    {
+                                        cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                        file.close();
+                                        remove_file(tmp);
+
+                                        exit(1);
+                                    }
+                                }
+                                else
+                                {
+                                    if (s != "")
+                                    {
+                                        new_exp += s + " ";
+                                        s = "";
+
+                                        // reset flags
+                                        is_num = false;
+                                        dot_found = false;
+                                    }
+
+                                    // binary operator
+                                    new_exp += c;
+                                    new_exp += " ";
+                                    j++;
+                                }
+                            }
+                            else if (c == '*' || c == '/' || c == '%' || c == '^')
+                            {
+                                if (j % 2 == 0)
+                                {
+                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                    file.close();
+                                    remove_file(tmp);
+
+                                    exit(1);
+                                }
+
+                                if (s != "")
+                                {
+                                    new_exp += s + " ";
+                                    s = "";
+
+                                    // reset flags
+                                    is_num = false;
+                                    dot_found = false;
+                                }
+
+                                // binary operator
+                                new_exp += c;
+                                new_exp += " ";
+                                j++;
+                            }
+                            else if (c == '.')
+                            {
+                                if (j % 2 == 1 || dot_found || is_operator(exp.at(i + 1)) || exp.at(i + 1) == ' ')
+                                {
+                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                    file.close();
+                                    remove_file(tmp);
+
+                                    exit(1);
+                                }
+
+                                s += c;
+
+                                // floating point
+                                is_num = true;
+                                dot_found = true;
+                            }
+                            else
+                            {
+                                if (j % 2 == 1)
+                                {
+                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
+
+                                    file.close();
+                                    remove_file(tmp);
+
+                                    exit(1);
+                                }
+
+                                // digit
+                                is_num = true;
+
+                                s += c;
+
+                                if (is_operator(exp.at(i + 1)))
+                                {
+                                    // binary operator
+                                    j++;
+
+                                    // reset flags
+                                    is_num = false;
+                                    dot_found = false;
+
+                                    continue;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // parentheses or space
+                            if (s != "")
+                            {
+                                new_exp += s + " ";
+                                s = "";
+                                j++;
+
+                                // reset flags
+                                is_num = false;
+                                dot_found = false;
+                            }
+
+                            if (c != ' ')
+                            {
+                                new_exp += c;
+                                new_exp += " ";
+                            }
+                        }
+                    }
+
+                    if (s != "")
+                        new_exp += s;
+
+                    exp = new_exp;
+
                     string tok;
 
                     stringstream ss_exp;
@@ -634,7 +800,7 @@ outer:
                     int parentheses_count = 0;
                     int operator_count = 0;
                     int operand_count = 0;
-                    int j = 0;
+                    j = 0;
 
                     while (getline(ss_exp, tok, ' '))
                     {
@@ -1167,37 +1333,15 @@ outer:
                 }
                 else if (op == CAT)
                 {
-                    if (i == 1)
+                    string str;
+
+                    if (token.at(0) == '&')
                     {
-                        // Number of strings to concatenate
+                        string var;
+
                         try
                         {
-                            if (token.at(0) == '&')
-                            {
-                                string var = "$" + token.substr(1);
-                                string value = "$" + memory[var];
-
-                                // Do something with value
-                                num_of_cats = stoi(memory[value]);
-                            }
-                            else if (token.at(0) == '$')
-                            {
-                                num_of_cats = stoi(memory[token]);
-                            }
-                            else
-                            {
-                                num_of_cats = stoi(token);
-                            }
-                        }
-                        catch (const std::invalid_argument &ia)
-                        {
-                            cout << "Type Error: Line " << line_num + 1
-                                 << ": Number of strings to concatenate should be integer only!" << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
+                            var = "$" + token.substr(1);
                         }
                         catch (const std::out_of_range &oor)
                         {
@@ -1208,55 +1352,29 @@ outer:
 
                             exit(1);
                         }
+
+                        string value = "$" + memory[var];
+
+                        // Do something with value
+                        str = memory[value];
                     }
-                    else if (i == 2)
+                    else if (token.at(0) == '$')
                     {
-                        key = token;
+                        str = memory[token];
                     }
                     else
                     {
-                        string str;
-
-                        if (token.at(0) == '&')
-                        {
-                            string var;
-
-                            try
-                            {
-                                var = "$" + token.substr(1);
-                            }
-                            catch (const std::out_of_range &oor)
-                            {
-                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            str = memory[value];
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            str = memory[token];
-                        }
-                        else
-                        {
-                            str = token;
-                        }
-
-                        string_sum += str;
-
-                        if (i == num_of_cats + 2)
-                        {
-                            update_map(memory, key, string_sum);
-                            break;
-                        }
+                        str = token;
                     }
+
+                    string_sum += str;
+                }
+                else if (op == TAC)
+                {
+                    update_map(memory, token, string_sum);
+                    string_sum = "";
+
+                    break; /* 2 tokens */
                 }
                 else if (op == BYE)
                 {
