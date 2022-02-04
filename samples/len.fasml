@@ -1,0 +1,16 @@
+
+MOV $name $1
+STR $name
+MOV $i 0
+
+> $loop
+ARRV $c $name $i
+
+IF SNEQ $c NULL
+[
+    ADD $i $i 1
+    JMP $loop
+]
+
+INT $i $i
+RET $i

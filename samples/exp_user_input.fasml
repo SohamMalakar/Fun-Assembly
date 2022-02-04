@@ -3,7 +3,6 @@ PRT Enter an expression:
 PRT $SPC
 SCNL $exp
 
-EXPR $exp
-RPXE $out
+EXPR $out $exp
 
 PRT Result: $out $ENDL

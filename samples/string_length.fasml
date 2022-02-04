@@ -22,8 +22,7 @@ MOV $len $i
 PRT The length of $name is $len
 PRT $ENDL
 
-CAT Hello, $name
-TAC $concat
+CAT $concat Hello, $name
 
 PRT $concat
 PRT $ENDL

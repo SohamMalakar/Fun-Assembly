@@ -1,0 +1,9 @@
+
+PRT Enter your name:
+PRT $SPC
+SCNL $name
+
+CALL len $name
+RECV $len
+
+PRT The length of string $name is $len $ENDL
