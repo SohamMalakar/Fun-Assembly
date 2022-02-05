@@ -42,7 +42,7 @@ enum op_code
     CAT,  // Concatenates strings
     CALL, // Calls a function
     RECV, // Receives values from a function
-    RET,  // Returns from a function
+    RET   // Returns from a function
 };
 
 enum log_code
