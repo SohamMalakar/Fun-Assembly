@@ -1,0 +1,11 @@
+
+MOV $i 0
+
+> $loop
+IF LSS $i $ARGC
+[
+    PRT $i &i $ENDL
+    ADD $i $i 1
+    INT $i $i
+    JMP $loop
+]

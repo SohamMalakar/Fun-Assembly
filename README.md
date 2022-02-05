@@ -9,7 +9,7 @@
 
 ## About
 
-It's a simple token-based programming language written in C++. <br>
+It's a simple token-based modular programming language written in C++. <br>
 Authors- [Soham Malakar](https://www.linkedin.com/in/soham-malakar-108533207) and [Sanket Tarafder](https://www.linkedin.com/in/sanket-tarafder-bbb33117b).
 
 ---
@@ -24,13 +24,15 @@ Authors- [Soham Malakar](https://www.linkedin.com/in/soham-malakar-108533207) an
 
 ## Overview
 
-It is a Procedure Oriented Programming Language which uses a simple expression evaluator. It stores the variables and elements in a hash table. As the instructions set for this language is very small and simple, it does not come with any loop structures or functions. These functionalities can be obtained using jumps.
+It is a Procedure Oriented Programming Language that uses a simple expression evaluator. It stores the variables and elements in a hash table. As the interpreter for this language is rather basic, it does not come with any loops and functions. But these functionalities are easy to obtain using jumps.
+
+The language has a built-in Module System to create modules. It is pretty similar to functions in most programming languages.
 
 ---
 
 ## Disadvantages
 
-- There is no scope for variables. So, unique names are required for variables.
+- There is no scope system. Variables are global.
 - It doesn't support structures and file handling.
 
 ---
@@ -51,9 +53,9 @@ There are few pre-compiled binaries available in the [release](https://github.co
 
 5. Now, type the following command to run the program.
 
-```
-> fasml.exe [FILENAME]
-```
+   ```
+   > fasml.exe [FILENAME]
+   ```
 
 Here, [FILENAME] refers to the `.fasml` file you want to compile.
 
@@ -95,9 +97,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 24 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 25 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
 
-The 24 Keywords with their functions are provided here:
+The 25 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -113,7 +115,6 @@ The 24 Keywords with their functions are provided here:
 | `MOD`    | Modulo of two variables                           |
 | `POW`    | Raises a variable to the given power              |
 | `EXPR`   | Evaluates an expression                           |
-| `RPXE`   | Terminator for the `EXPR` command                 |
 | `IF`     | If the condition is true, executes the block      |
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
@@ -124,7 +125,9 @@ The 24 Keywords with their functions are provided here:
 | `!`      | Comments out any text                             |
 | `STR`    | Stores strings as character arrays                |
 | `CAT`    | Concatenates strings                              |
-| `TAC`    | Terminator for the `CAT` command                  |
+| `CALL`   | Calls a module                                    |
+| `RECV`   | Receives values from a module                     |
+| `RET`    | Returns from a module                             |
 
 The 8 Logical Operators with their meanings are provided here:
 
@@ -247,14 +250,12 @@ Consider the following code snippet:
 MOV $var1 2
 MOV $var2 3
 
-EXPR ( $var1 + 5 ) * -10 / $var2
-RPXE $out
+EXPR $out ( $var1 + 5 ) * -10 / $var2
 
 PRT $out $ENDL
 ```
 
-Here, the compiler evaluates the expression `( $var1 + 5 ) * -10 / $var2` and `RPXE` stores the result in the variable `$out`.
-And prints the value of `$out` followed by a newline character.
+Here, the compiler evaluates the expression `( $var1 + 5 ) * -10 / $var2` and assign the result to the variable `$out`.
 
 ---
 
@@ -406,11 +407,10 @@ The above code snippet takes a string as input and stores it as a string in the 
 To concatenate two or more strings together, we use the keyword `CAT`.
 
 ```
-CAT $str1 $str2
-TAC $str3
+CAT $str3 $str1 $str2
 ```
 
-Here, the `CAT` keyword concatenates the strings `$str1` and `$str2`. And the `TAC` keyword stores the concatenated string in the variable `$str3`.
+Here, the `CAT` keyword concatenates the strings `$str1` and `$str2` and assign the result to the variable `$str3`.
 
 ---
 
@@ -486,6 +486,64 @@ PRT $0 $1 $2
 ```
 
 > **_NOTE:_** Here `$0` is the file name. And `$1`, `$2`, and so on are the command line arguments. These are predefined.
+
+---
+
+### Module System
+
+#### Create Modules
+
+To create modules, follow the following steps:
+
+- Create a file with the extension `.fasml` in the same directory as the main file.
+
+- Now, you have to define the module.
+
+- After defining the module, you can return values from it by using the keyword `RET`.
+
+  ```
+  RET $var1 $var2
+  ```
+
+  Here, the compiler returns the values of the variables `$var1` and `$var2` to the caller.
+
+> **_NOTE:_** A module is nothing but a typical fasml file with `RET` keyword(s).
+
+#### Call Modules
+
+To call the module, use the keyword `CALL`.
+
+```
+CALL module_name $arg1 $arg2
+```
+
+Here, the compiler calls the module `module_name` and passes the values of the arguments `$arg1` and `$arg2` to it.
+
+> **_NOTE:_** The `module_name` should be the same as the module name without the extension.
+
+#### Accessing Arguments
+
+To access the arguments of the module use `$1`, `$2`, and so on.
+
+```
+MOV $var1 $1
+```
+
+Here, the compiler assigns the value of the 1st argument to the variable `$var1`.
+
+> **_NOTE:_** `$0` is the relative path of the module and `$ARGC` is the number of arguments passed to the module.
+
+#### Receiving Values from Modules
+
+To receive the return values from the module, use the keyword `RECV` after calling the module.
+
+```
+RECV $var1 $var2
+```
+
+Here, the compiler assigns the values of the returned variables to `$var1` and `$var2`.
+
+> **_NOTE:_** Before calling another module, you have to receive the return values from the previous module. Otherwise, the return values will be lost.
 
 ---
 

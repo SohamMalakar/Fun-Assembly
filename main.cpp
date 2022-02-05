@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <queue>
 #include <regex>
 #include <sstream>
 #include <stack>
@@ -14,57 +15,50 @@
 using namespace std;
 
 // Precedence of operators
-#define PRECEDENCE(x)                                                                                                  \
+#define PRECEDENCE(x) \
     ((x) == "+" || (x) == "-" ? 0 : ((x) == "*" || (x) == "/" || (x) == "%" ? 1 : ((x) == "^" ? 2 : -1)))
 
-/* comments: ! */
-
-typedef enum
+enum op_code
 {
-    PRT,  /* Prints the tokens */
-    SCN,  /* Takes inputs upto next space */
-    SCNL, /* Takes inputs upto next line */
-    MOV,  /* Assigns a value to a variable */
-    INT,  /* Converts a variable to an integer */
-    ADD,  /* Adds two variables */
-    SUB,  /* Subtracts two variables */
-    MUL,  /* Multiplies two variables */
-    DIV,  /* Divides two variables */
-    MOD,  /* Modulo of two variables */
-    POW,  /* Raises a variable to the given power */
-    EXPR, /* Evaluates expression */
-    RPXE, /* Terminates the expression */
-    IF,   /* If condition is true, execute the block */
-    JMP,  /* Jumps to the given label */
-    ARR,  /* Store data in array */
-    ARRI, /* Initialize array */
-    ARRV, /* Accesses value in array */
-    BYE,  /* Exits the program */
-    STR,  /* Store strings as char arrays */
-    CAT,  /* Concatenates strings */
-    TAC   /* Terminates the concatenation */
+    PRT,  // Prints the tokens
+    SCN,  // Takes inputs upto the next space
+    SCNL, // Takes inputs upto the next newline
+    MOV,  // Assigns a value to a variable
+    INT,  // Converts a variable to an integer
+    ADD,  // Adds two variables
+    SUB,  // Subtracts two variables
+    MUL,  // Multiplies two variables
+    DIV,  // Divides two variables
+    MOD,  // Modulo of two variables
+    POW,  // Raises one variable to the power of another
+    EXPR, // Evaluates an expression
+    IF,   // If condition is true, executes the block
+    JMP,  // Jumps to the specified line
+    ARR,  // Stores a value in an array
+    ARRI, // Initializes an array
+    ARRV, // Retrieves a value from an array
+    BYE,  // Exits the program
+    STR,  // Stores strings as char arrays
+    CAT,  // Concatenates strings
+    CALL, // Calls a function
+    RECV, // Receives values from a function
+    RET   // Returns from a function
+};
 
-} op_code;
-
-/* op_code: >, ! */
-
-/* keyword: NULL */
-string NULL_OP("NULL");
-
-typedef enum
+enum log_code
 {
-    EQL,  /* == */
-    NEQ,  /* != */
-    GTR,  /* > */
-    LSS,  /* < */
-    GEQ,  /* >= */
-    LEQ,  /* <= */
-    SEQL, /* == for strings */
-    SNEQ  /* != for strings */
+    EQL,  // == (equal to)
+    NEQ,  // != (not equal to)
+    LSS,  // < (less than)
+    LEQ,  // <= (less than or equal to)
+    GTR,  // > (greater than)
+    GEQ,  // >= (greater than or equal to)
+    SEQL, // == for strings
+    SNEQ  // != for strings
+};
 
-} log_code;
-
-template <typename T1, typename T2> void update_map(unordered_map<T1, T2> &map, T1 key, T2 value)
+template <typename T1, typename T2>
+void update_map(unordered_map<T1, T2> &map, T1 key, T2 value)
 {
     auto itr = map.find(key);
 
@@ -74,24 +68,8 @@ template <typename T1, typename T2> void update_map(unordered_map<T1, T2> &map, 
         map[key] = value;
 }
 
-void remove_file(string name)
-{
-    try
-    {
-        filesystem::remove(name);
-    }
-    catch (const std::filesystem::filesystem_error &err)
-    {
-        std::cout << "filesystem error: " << err.what() << '\n';
-    }
-}
-
-float modulo(float x, float y)
-{
-    return x - y * floor(x / y);
-}
-
-template <typename T> void reverse_stack(stack<T> &s)
+template <typename T>
+void reverse_stack(stack<T> &s)
 {
     stack<T> temp;
 
@@ -105,1153 +83,619 @@ template <typename T> void reverse_stack(stack<T> &s)
     s = temp;
 }
 
+double modulo(double a, double b)
+{
+    return a - b * floor(a / b);
+}
+
 bool is_operator(char c)
 {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^';
 }
 
-int main(int argc, char **argv)
+double expr_eval(string infix)
 {
-    if (argc < 2)
+    string token;
+
+    infix += " ";
+
+    bool is_num = false;
+    bool dot_found = false;
+
+    string s = "";
+    string exp = "";
+
+    smatch match;
+    regex re("\\([ ]*([\\+|-]?[\\d.]+)[ ]*?\\)");
+    regex_search(infix, match, re);
+    infix = regex_replace(infix, re, match[1].str());
+
+    int j = 0;
+    int len = infix.length();
+
+    for (int i = 0; i < len; i++)
     {
-        cout << "Usage: " << argv[0] << " <file> [optional: args]" << endl;
+        char c = infix.at(i);
+
+        if (c != '(' && c != ')' && c != ' ')
+        {
+            if (c == '+' || c == '-')
+            {
+                if (j % 2 == 0)
+                {
+                    is_num = true;
+                    s += c;
+
+                    if (is_operator(infix.at(i + 1)) || infix.at(i + 1) == ' ')
+                    {
+                        cerr << "Invalid expression\n";
+                        exit(1);
+                    }
+                }
+                else
+                {
+                    if (s != "")
+                    {
+                        exp += s + " ";
+                        s = "";
+
+                        is_num = false;
+                        dot_found = false;
+                    }
+
+                    exp += c;
+                    exp += " ";
+                    j++;
+                }
+            }
+            else if (c == '*' || c == '/' || c == '%' || c == '^')
+            {
+                if (j % 2 == 0)
+                {
+                    cerr << "Invalid expression\n";
+                    exit(1);
+                }
+
+                if (s != "")
+                {
+                    exp += s + " ";
+                    s = "";
+
+                    is_num = false;
+                    dot_found = false;
+                }
+
+                exp += c;
+                exp += " ";
+                j++;
+            }
+            else if (c == '.')
+            {
+                if (j % 2 == 1 || dot_found || is_operator(infix.at(i + 1)) || infix.at(i + 1) == ' ')
+                {
+                    cerr << "Invalid expression\n";
+                    exit(1);
+                }
+
+                s += c;
+
+                is_num = true;
+                dot_found = true;
+            }
+            else
+            {
+                if (j % 2 == 1)
+                {
+                    cerr << "Invalid expression\n";
+                    exit(1);
+                }
+
+                is_num = true;
+
+                s += c;
+
+                if (is_operator(infix.at(i + 1)))
+                {
+                    j++;
+
+                    is_num = false;
+                    dot_found = false;
+
+                    continue;
+                }
+            }
+        }
+        else
+        {
+            if (s != "")
+            {
+                exp += s + " ";
+                s = "";
+                j++;
+
+                is_num = false;
+                dot_found = false;
+            }
+
+            if (c != ' ')
+            {
+                exp += c;
+                exp += " ";
+            }
+        }
+    }
+
+    if (s != "")
+        exp += s;
+
+    infix = exp;
+
+    stringstream ss;
+    istringstream iss(infix);
+
+    copy(istream_iterator<string>(iss), istream_iterator<string>(), ostream_iterator<string>(ss, " "));
+
+    int parentheses_count = 0;
+    int operator_count = 0;
+    int operand_count = 0;
+    int i = 0;
+
+    while (getline(ss, token, ' '))
+    {
+        if (token == "(")
+        {
+            parentheses_count++;
+        }
+        else if (token == ")")
+        {
+            parentheses_count--;
+        }
+        else if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^")
+        {
+            if (i % 2 == 1)
+            {
+                operator_count++;
+            }
+            else
+            {
+                cerr << "Invalid expression\n";
+                exit(1);
+            }
+
+            i++;
+        }
+        else
+        {
+            if (i % 2 == 0)
+            {
+                stringstream ss_num(token);
+                double num;
+                ss_num >> num;
+
+                if (ss_num.fail())
+                {
+                    cerr << "Invalid expression\n";
+                    exit(1);
+                }
+
+                operand_count++;
+            }
+            else
+            {
+                cerr << "Invalid expression\n";
+                exit(1);
+            }
+
+            i++;
+        }
+
+        if (parentheses_count < 0)
+        {
+            cerr << "Invalid expression\n";
+            exit(1);
+        }
+    }
+
+    if (parentheses_count != 0)
+    {
+        cerr << "Invalid expression\n";
         exit(1);
     }
 
-    ifstream file;
-
-    file.open(argv[1], ios_base::binary);
-
-    if (!file.is_open())
+    if (operator_count != operand_count - 1)
     {
-        cout << argv[0] << ": error: " << argv[1] << ": No such file" << endl;
+        cerr << "Invalid expression\n";
         exit(1);
     }
 
-    // Temp file
-    string name(argv[1]);
+    stack<string> stk;
+    stack<string> postfix;
 
-    string tmp = name + ".tmp";
+    ss.clear();
+    ss.seekg(0);
 
-    ofstream file_tmp(tmp, ios_base::binary | ios_base::out);
+    while (getline(ss, token, ' '))
+    {
+        if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^")
+        {
+            while (!stk.empty() && PRECEDENCE(stk.top()) >= PRECEDENCE(token))
+            {
+                postfix.push(stk.top());
+                stk.pop();
+            }
 
-    // Copying
-    file_tmp << file.rdbuf();
+            stk.push(token);
+        }
+        else if (token == "(")
+        {
+            stk.push(token);
+        }
+        else if (token == ")")
+        {
+            bool found_element = false;
 
-    // Original file closed
-    file.close();
+            while (stk.top() != "(")
+            {
+                postfix.push(stk.top());
+                stk.pop();
+                found_element = true;
+            }
 
-    // Copied temp file closed
-    file_tmp.close();
+            if (found_element)
+                stk.pop();
+            else
+            {
+                cerr << "Invalid expression\n";
+                exit(1);
+            }
+        }
+        else
+        {
+            postfix.push(token);
+        }
+    }
 
-    file.open(tmp);
+    while (!stk.empty())
+    {
+        postfix.push(stk.top());
+        stk.pop();
+    }
 
-    string line;
+    reverse_stack(postfix);
 
-    vector<int> lines;
+    stack<double> eval;
 
-    lines.push_back(0);
+    while (!postfix.empty())
+    {
+        token = postfix.top();
+        postfix.pop();
 
-    unordered_map<int, int> pairs;
+        if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^")
+        {
+            double y = eval.top();
+            eval.pop();
+            double x = eval.top();
+            eval.pop();
 
+            if (token == "+")
+                eval.push(x + y);
+            else if (token == "-")
+                eval.push(x - y);
+            else if (token == "*")
+                eval.push(x * y);
+            else if (token == "/")
+                eval.push(x / y);
+            else if (token == "%")
+                eval.push(modulo(x, y));
+            else if (token == "^")
+                eval.push(pow(x, y));
+        }
+        else
+        {
+            eval.push(stod(token));
+        }
+    }
+
+    return eval.top();
+}
+
+void create_pairs(vector<string> lines, unordered_map<int, int> &pairs)
+{
     stack<int> stk;
 
-    int line_num = 0;
-
-    unordered_map<string, string> memory;
-
-    while (getline(file, line))
+    for (int i = 0; i < lines.size(); i++)
     {
-        lines.push_back(file.tellg());
+        string line = lines[i];
 
         if (line.find("[") != string::npos)
         {
-            stk.push(line_num + 1);
+            stk.push(i + 1);
         }
         else if (line.find("]") != string::npos)
         {
             if (stk.empty())
             {
-                cout << "Error: Line " << line_num + 1 << ": ] without matching [" << endl;
-
-                file.close();
-                remove_file(tmp);
-
+                cerr << "Error: Unmatched ]\n";
                 exit(1);
             }
 
-            int top = stk.top();
-            stk.pop();
+            pairs[stk.top()] = i + 1;
+            pairs[i + 1] = stk.top();
 
-            pairs[top] = line_num + 1;
-            pairs[line_num + 1] = top;
+            stk.pop();
         }
+    }
+
+    if (!stk.empty())
+    {
+        cerr << "Error: Unmatched [\n";
+        exit(1);
+    }
+}
+
+void create_labels(vector<string> lines, unordered_map<string, string> &memory)
+{
+    for (int i = 0; i < lines.size(); i++)
+    {
+        string line = lines[i];
 
         stringstream ss;
         istringstream iss(line);
 
-        // Removes extra spaces
         copy(istream_iterator<string>(iss), istream_iterator<string>(), ostream_iterator<string>(ss, " "));
 
-        int i = 0;
+        int j = 0;
 
         op_code op;
         string token;
 
         while (getline(ss, token, ' '))
         {
-            if (token.at(0) == '!')
-                break;
-
-            if (i == 0)
+            if (j == 0)
             {
                 if (token != ">")
                     break;
             }
             else
             {
-                if (token.at(0) == '$')
-                    update_map(memory, token, to_string(line_num + 1));
-
+                update_map(memory, token, to_string(i + 1));
                 break;
             }
 
-            i++;
+            j++;
         }
-
-        line_num++;
     }
+}
 
-    if (!stk.empty())
-    {
-        cout << "Error: Line " << line_num + 1 << ": [ without matching ]" << endl;
-
-        file.close();
-        remove_file(tmp);
-
-        exit(1);
-    }
-
-    file.clear();
-    file.seekg(0);
-
-    /* Add those args here */
-    string lang_argc = to_string(argc - 1);
-
-    // Add predefined variables
-    memory["$ARGC"] = lang_argc;
+void define_variables(unordered_map<string, string> &memory)
+{
     memory["$ENDL"] = "\n";
     memory["$TAB"] = "\t";
     memory["$SPC"] = " ";
     memory["$EXL"] = "!";
     memory["$DOL"] = "$";
     memory["$AMP"] = "&";
+}
 
-    for (int i = 0; i < argc - 1; i++)
+string eval(string str, unordered_map<string, string> memory)
+{
+    if (str.at(0) == '$')
+        str = memory[str];
+    else if (str.at(0) == '&')
+        str = memory["$" + memory["$" + str.substr(1)]];
+
+    return str;
+}
+
+int main(int argc, char **argv)
+{
+    if (argc < 2)
     {
-        string key_args = "$" + to_string(i);
-        string value_args(argv[i + 1]);
-        memory[key_args] = value_args;
+        cerr << "Usage: " << argv[0] << " <file> [optional: args]\n";
+        exit(1);
     }
 
-    string key, value1, value2;
-    string exp;
+    ifstream file;
+    file.open(argv[1], ios::binary);
 
-    line_num = 0;
-    string string_sum = "";
-
-outer:
-    while (getline(file, line))
+    if (!file.is_open())
     {
-        stringstream ss;
-        istringstream iss(line);
+        cerr << argv[0] << ": error: " << argv[1] << ": No such file\n";
+        exit(1);
+    }
 
-        copy(istream_iterator<string>(iss), istream_iterator<string>(), ostream_iterator<string>(ss, " "));
+    // Read the file into a vector of strings
+    vector<string> lines;
 
-        int i = 0;
-        op_code op;
-        string token;
+    for (string line; getline(file, line);)
+    {
+        line = regex_replace(line, regex("!.*"), ""); // Remove comments
+        lines.push_back(line);
+    }
 
-        string arr_name;
-        string index;
-        string val;
+    file.close();
 
-        while (getline(ss, token, ' '))
+    string dir(argv[1]);
+
+    if (dir.find("/") != string::npos || dir.find("\\ ") != string::npos)
+    {
+        dir = dir.substr(0, dir.find_last_of("/") + 1); // GNU/Linux
+    }
+    else if (dir.find("\\") != string::npos)
+    {
+        dir = dir.substr(0, dir.find_last_of("\\") + 1); // Windows
+    }
+    else
+    {
+        dir = ""; // No directory
+    }
+
+    unordered_map<string, vector<string>> lines_map;
+    unordered_map<string, unordered_map<int, int>> pairs_map;
+    stack<string> func_name_stk;
+    stack<int> line_num_stk;
+    stack<unordered_map<string, string>> memory_stk;
+
+    unordered_map<string, string> memory;
+
+    memory["$ARGC"] = to_string(argc - 1);
+
+    for (int i = 0; i < argc - 1; i++)
+        memory["$" + to_string(i)] = argv[i + 1];
+
+    define_variables(memory);
+
+    int line_num = 0;
+    string func_name(argv[1]);
+    queue<string> ret_vals;
+    unordered_map<int, int> pairs;
+
+    create_pairs(lines, pairs);
+    create_labels(lines, memory);
+
+    while (true)
+    {
+    outer:
+        while (line_num < lines.size())
         {
+            string line = lines[line_num];
+
+            stringstream ss;
+            istringstream iss(line);
+
+            copy(istream_iterator<string>(iss), istream_iterator<string>(), ostream_iterator<string>(ss, " "));
+
+            int i = 0;
+            string token;
+            op_code op;
             log_code log;
+            string arr_name;
+            string index;
+            vector<string> func_lines;
+            queue<string> func_args;
 
-            // Comments
-            if (token.at(0) == '!')
-                break;
+            string key, value1, value2;
+            string string_sum;
+            string exp;
 
-            if (i == 0)
+            while (getline(ss, token, ' '))
             {
-                /* For op code only */
-                if (token == "PRT")
-                    op = PRT;
-                else if (token == "SCN")
-                    op = SCN;
-                else if (token == "SCNL")
-                    op = SCNL;
-                else if (token == "MOV")
-                    op = MOV;
-                else if (token == "INT")
-                    op = INT;
-                else if (token == "ADD")
-                    op = ADD;
-                else if (token == "SUB")
-                    op = SUB;
-                else if (token == "MUL")
-                    op = MUL;
-                else if (token == "DIV")
-                    op = DIV;
-                else if (token == "MOD")
-                    op = MOD;
-                else if (token == "POW")
-                    op = POW;
-                else if (token == "EXPR")
-                    op = EXPR;
-                else if (token == "RPXE")
-                    op = RPXE;
-                else if (token == "IF")
-                    op = IF;
-                else if (token == "JMP")
-                    op = JMP;
-                else if (token == "ARR")
-                    op = ARR;
-                else if (token == "ARRI")
-                    op = ARRI;
-                else if (token == "ARRV")
-                    op = ARRV;
-                else if (token == "STR")
-                    op = STR;
-                else if (token == "CAT")
-                    op = CAT;
-                else if (token == "TAC")
-                    op = TAC;
-                else if (token == "BYE")
-                    op = BYE;
-                else if (token == ">")
-                    break;
-                else if (token == "[" || token == "]")
-                    break;
+                if (i == 0)
+                {
+                    if (token == "PRT")
+                        op = PRT;
+                    else if (token == "SCN")
+                        op = SCN;
+                    else if (token == "SCNL")
+                        op = SCNL;
+                    else if (token == "MOV")
+                        op = MOV;
+                    else if (token == "INT")
+                        op = INT;
+                    else if (token == "ADD")
+                        op = ADD;
+                    else if (token == "SUB")
+                        op = SUB;
+                    else if (token == "MUL")
+                        op = MUL;
+                    else if (token == "DIV")
+                        op = DIV;
+                    else if (token == "MOD")
+                        op = MOD;
+                    else if (token == "POW")
+                        op = POW;
+                    else if (token == "EXPR")
+                        op = EXPR;
+                    else if (token == "IF")
+                        op = IF;
+                    else if (token == "JMP")
+                        op = JMP;
+                    else if (token == "ARR")
+                        op = ARR;
+                    else if (token == "ARRI")
+                        op = ARRI;
+                    else if (token == "ARRV")
+                        op = ARRV;
+                    else if (token == "STR")
+                        op = STR;
+                    else if (token == "CAT")
+                        op = CAT;
+                    else if (token == "BYE")
+                        op = BYE;
+                    else if (token == "CALL")
+                        op = CALL;
+                    else if (token == "RECV")
+                        op = RECV;
+                    else if (token == "RET")
+                        op = RET;
+                    else if (token == ">")
+                        break;
+                    else if (token == "[" || token == "]")
+                        break;
+                    else
+                    {
+                        cerr << "Error: Line " << line_num + 1 << ": " << token << " is not a valid op code\n";
+                        exit(1);
+                    }
+                }
                 else
                 {
-                    cout << "Error: Line " << line_num + 1 << ": " << token << " is not a valid op code" << endl;
-
-                    file.close();
-                    remove_file(tmp);
-
-                    exit(1);
-                }
-            }
-            else
-            {
-                /* For operands only */
-                if (op == PRT)
-                {
-                    if (i != 1)
-                        cout << " ";
-
-                    if (token.at(0) == '&')
+                    if (op == PRT)
                     {
-                        string var;
+                        if (i != 1)
+                            cout << " ";
 
-                        try
-                        {
-                            var = "$" + token.substr(1);
-                        }
-                        catch (const std::out_of_range &oor)
-                        {
-                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-
-                        string value = "$" + memory[var];
-
-                        // Do something with value
-                        cout << memory[value];
+                        cout << eval(token, memory);
                     }
-                    else if (token.at(0) == '$')
+                    else if (op == SCN)
                     {
-                        cout << memory[token];
+                        string input;
+                        cin >> input;
+
+                        update_map(memory, token, input);
                     }
-                    else
+                    else if (op == SCNL)
                     {
-                        cout << token;
+                        string input;
+                        getline(cin, input);
+
+                        update_map(memory, token, input);
                     }
-                }
-                else if (op == SCN)
-                {
-                    // Asks for input
-                    string input;
-                    cin >> input;
-
-                    // Store the input in the hashtable
-                    update_map(memory, token, input);
-                }
-                else if (op == SCNL)
-                {
-                    // Asks for input up to a new line
-                    string input;
-                    getline(cin, input);
-
-                    // Store the input in the hashtable
-                    update_map(memory, token, input);
-                }
-                else if (op == MOV)
-                {
-                    // Move the value from one variable to another
-                    if (i == 1)
-                    {
-                        key = token;
-                    }
-                    else
-                    {
-                        if (token.at(0) == '&')
-                        {
-                            string var;
-
-                            try
-                            {
-                                var = "$" + token.substr(1);
-                            }
-                            catch (const std::out_of_range &oor)
-                            {
-                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            update_map(memory, key, memory[value]);
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            update_map(memory, key, memory[token]);
-                        }
-                        else
-                        {
-                            update_map(memory, key, token);
-                        }
-
-                        break; /* 3 tokens */
-                    }
-                }
-                else if (op == INT)
-                {
-                    // Convert the value to integer
-                    if (i == 1)
-                    {
-                        key = token;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            if (token.at(0) == '&')
-                            {
-                                string var = "$" + token.substr(1);
-                                string value = "$" + memory[var];
-
-                                // Do something with value
-                                update_map(memory, key, to_string(stoi(memory[value])));
-                            }
-                            else if (token.at(0) == '$')
-                            {
-                                update_map(memory, key, to_string(stoi(memory[token])));
-                            }
-                            else
-                            {
-                                update_map(memory, key, to_string(stoi(token)));
-                            }
-                        }
-                        catch (const std::invalid_argument &ia)
-                        {
-                            cout << "Error: Line " << line_num + 1 << ": " << ia.what() << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-                        catch (const std::out_of_range &oor)
-                        {
-                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-
-                        break; /* 3 tokens */
-                    }
-                }
-                else if (op == ADD || op == SUB || op == MUL || op == DIV || op == MOD || op == POW)
-                {
-                    // Add, Sub, Mul, Div, Mod, Pow
-                    if (i == 1)
-                    {
-                        // Save the key
-                        key = token;
-                    }
-                    else if (i == 2)
-                    {
-                        if (token.at(0) == '&')
-                        {
-                            string var;
-
-                            try
-                            {
-                                var = "$" + token.substr(1);
-                            }
-                            catch (const std::out_of_range &oor)
-                            {
-                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            value1 = memory[value];
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            value1 = memory[token];
-                        }
-                        else
-                        {
-                            value1 = token;
-                        }
-                    }
-                    else if (i == 3)
-                    {
-                        if (token.at(0) == '&')
-                        {
-                            string var;
-
-                            try
-                            {
-                                var = "$" + token.substr(1);
-                            }
-                            catch (const std::out_of_range &oor)
-                            {
-                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            value2 = memory[value];
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            value2 = memory[token];
-                        }
-                        else
-                        {
-                            value2 = token;
-                        }
-
-                        // Perform the operation
-                        float result;
-
-                        try
-                        {
-                            if (op == ADD)
-                                result = stof(value1) + stof(value2);
-                            else if (op == SUB)
-                                result = stof(value1) - stof(value2);
-                            else if (op == MUL)
-                                result = stof(value1) * stof(value2);
-                            else if (op == DIV)
-                                result = stof(value1) / stof(value2);
-                            else if (op == MOD)
-                                result = modulo(stof(value1), stof(value2));
-                            else if (op == POW)
-                                result = pow(stof(value1), stof(value2));
-                        }
-                        catch (const std::invalid_argument &ia)
-                        {
-                            cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-
-                        // Store the result in the hashtable
-                        update_map(memory, key, to_string(result));
-
-                        break; /* 4 tokens */
-                    }
-                }
-                else if (op == EXPR)
-                {
-                    try
-                    {
-                        // Create the expression
-                        if (token.at(0) == '$')
-                            exp += memory[token] + " ";
-                        else if (token.at(0) == '&')
-                            exp += memory["$" + memory["$" + token.substr(1)]] + " ";
-                        else
-                            exp += token + " ";
-                    }
-                    catch (const std::out_of_range &oor)
-                    {
-                        cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-                }
-                else if (op == RPXE)
-                {
-                    bool is_num = false;
-                    bool dot_found = false;
-
-                    string s = "";
-                    string new_exp = "";
-
-                    smatch match;
-                    regex re("\\([ ]*([\\+|-]?[\\d.]+)[ ]*?\\)");
-                    regex_search(exp, match, re);
-                    exp = regex_replace(exp, re, match[1].str());
-
-                    int j = 0;
-                    int len = exp.length();
-
-                    // lexical analysis
-                    for (int i = 0; i < len; i++)
-                    {
-                        char c = exp.at(i);
-
-                        if (c != '(' && c != ')' && c != ' ')
-                        {
-                            if (c == '+' || c == '-')
-                            {
-                                if (j % 2 == 0)
-                                {
-                                    // unary operator
-                                    is_num = true;
-                                    s += c;
-
-                                    if (is_operator(exp.at(i + 1)) || exp.at(i + 1) == ' ')
-                                    {
-                                        cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                        file.close();
-                                        remove_file(tmp);
-
-                                        exit(1);
-                                    }
-                                }
-                                else
-                                {
-                                    if (s != "")
-                                    {
-                                        new_exp += s + " ";
-                                        s = "";
-
-                                        // reset flags
-                                        is_num = false;
-                                        dot_found = false;
-                                    }
-
-                                    // binary operator
-                                    new_exp += c;
-                                    new_exp += " ";
-                                    j++;
-                                }
-                            }
-                            else if (c == '*' || c == '/' || c == '%' || c == '^')
-                            {
-                                if (j % 2 == 0)
-                                {
-                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                    file.close();
-                                    remove_file(tmp);
-
-                                    exit(1);
-                                }
-
-                                if (s != "")
-                                {
-                                    new_exp += s + " ";
-                                    s = "";
-
-                                    // reset flags
-                                    is_num = false;
-                                    dot_found = false;
-                                }
-
-                                // binary operator
-                                new_exp += c;
-                                new_exp += " ";
-                                j++;
-                            }
-                            else if (c == '.')
-                            {
-                                if (j % 2 == 1 || dot_found || is_operator(exp.at(i + 1)) || exp.at(i + 1) == ' ')
-                                {
-                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                    file.close();
-                                    remove_file(tmp);
-
-                                    exit(1);
-                                }
-
-                                s += c;
-
-                                // floating point
-                                is_num = true;
-                                dot_found = true;
-                            }
-                            else
-                            {
-                                if (j % 2 == 1)
-                                {
-                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                    file.close();
-                                    remove_file(tmp);
-
-                                    exit(1);
-                                }
-
-                                // digit
-                                is_num = true;
-
-                                s += c;
-
-                                if (is_operator(exp.at(i + 1)))
-                                {
-                                    // binary operator
-                                    j++;
-
-                                    // reset flags
-                                    is_num = false;
-                                    dot_found = false;
-
-                                    continue;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // parentheses or space
-                            if (s != "")
-                            {
-                                new_exp += s + " ";
-                                s = "";
-                                j++;
-
-                                // reset flags
-                                is_num = false;
-                                dot_found = false;
-                            }
-
-                            if (c != ' ')
-                            {
-                                new_exp += c;
-                                new_exp += " ";
-                            }
-                        }
-                    }
-
-                    if (s != "")
-                        new_exp += s;
-
-                    exp = new_exp;
-
-                    string tok;
-
-                    stringstream ss_exp;
-                    istringstream iss_exp(exp);
-                    copy(istream_iterator<string>(iss_exp), istream_iterator<string>(),
-                         ostream_iterator<string>(ss_exp, " "));
-
-                    int parentheses_count = 0;
-                    int operator_count = 0;
-                    int operand_count = 0;
-                    j = 0;
-
-                    while (getline(ss_exp, tok, ' '))
-                    {
-                        if (tok == "(")
-                        {
-                            parentheses_count++;
-                        }
-                        else if (tok == ")")
-                        {
-                            parentheses_count--;
-                        }
-                        else if (tok == "+" || tok == "-" || tok == "*" || tok == "/" || tok == "%" || tok == "^")
-                        {
-                            if (j % 2 == 1)
-                            {
-                                operator_count++;
-                            }
-                            else
-                            {
-                                cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            j++;
-                        }
-                        else
-                        {
-                            if (j % 2 == 0)
-                            {
-                                // check if operand is a number
-                                stringstream ss_num(tok);
-                                double num;
-                                ss_num >> num;
-
-                                if (ss_num.fail())
-                                {
-                                    cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                    file.close();
-                                    remove_file(tmp);
-
-                                    exit(1);
-                                }
-
-                                operand_count++;
-                            }
-                            else
-                            {
-                                cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            j++;
-                        }
-
-                        if (parentheses_count < 0)
-                        {
-                            cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-                    }
-
-                    if (parentheses_count != 0)
-                    {
-                        cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-
-                    if (operator_count != operand_count - 1)
-                    {
-                        cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-
-                    stack<string> stk, postfix;
-
-                    ss_exp.clear();
-                    ss_exp.seekg(0);
-
-                    while (getline(ss_exp, tok, ' '))
-                    {
-                        if (tok == "+" || tok == "-" || tok == "*" || tok == "/" || tok == "%" || tok == "^")
-                        {
-                            while (!stk.empty() && PRECEDENCE(stk.top()) >= PRECEDENCE(tok))
-                            {
-                                postfix.push(stk.top());
-                                stk.pop();
-                            }
-
-                            stk.push(tok);
-                        }
-                        else if (tok == "(")
-                        {
-                            stk.push(tok);
-                        }
-                        else if (tok == ")")
-                        {
-                            bool found_element = false;
-
-                            while (stk.top() != "(")
-                            {
-                                postfix.push(stk.top());
-                                stk.pop();
-                                found_element = true;
-                            }
-
-                            if (found_element)
-                                stk.pop();
-                            else
-                            {
-                                cout << "Error: Line " << line_num << ": Invalid expression!" << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-                        }
-                        else
-                        {
-                            postfix.push(tok);
-                        }
-                    }
-
-                    while (!stk.empty())
-                    {
-                        postfix.push(stk.top());
-                        stk.pop();
-                    }
-
-                    reverse_stack(postfix);
-
-                    // Evaluate the postfix expression
-                    stack<double> eval;
-
-                    while (!postfix.empty())
-                    {
-                        tok = postfix.top();
-                        postfix.pop();
-
-                        if (tok == "+" || tok == "-" || tok == "*" || tok == "/" || tok == "%" || tok == "^")
-                        {
-                            double op2 = eval.top();
-                            eval.pop();
-                            double op1 = eval.top();
-                            eval.pop();
-
-                            double result;
-
-                            if (tok == "+")
-                                result = op1 + op2;
-                            else if (tok == "-")
-                                result = op1 - op2;
-                            else if (tok == "*")
-                                result = op1 * op2;
-                            else if (tok == "/")
-                                result = op1 / op2;
-                            else if (tok == "%")
-                                result = modulo(op1, op2);
-                            else if (tok == "^")
-                                result = pow(op1, op2);
-
-                            eval.push(result);
-                        }
-                        else
-                        {
-                            eval.push(stod(tok));
-                        }
-                    }
-
-                    // Store the result in the hashtable
-                    update_map(memory, token, to_string(eval.top()));
-
-                    // Reset the expression
-                    exp = "";
-
-                    break; /* 2 tokens */
-                }
-                else if (op == IF)
-                {
-                    if (i == 1)
-                    {
-                        if (token == "EQL")
-                            log = EQL;
-                        else if (token == "NEQ")
-                            log = NEQ;
-                        else if (token == "GTR")
-                            log = GTR;
-                        else if (token == "LSS")
-                            log = LSS;
-                        else if (token == "GEQ")
-                            log = GEQ;
-                        else if (token == "LEQ")
-                            log = LEQ;
-                        else if (token == "SEQL")
-                            log = SEQL;
-                        else if (token == "SNEQ")
-                            log = SNEQ;
-                        else
-                        {
-                            cout << "Error: Line " << line_num + 1 << ": " << token
-                                 << " is not a valid comparison operator" << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-                    }
-                    else if (i == 2)
-                    {
-                        if (token.at(0) == '&')
-                        {
-                            string var;
-
-                            try
-                            {
-                                var = "$" + token.substr(1);
-                            }
-                            catch (const std::out_of_range &oor)
-                            {
-                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            value1 = memory[value];
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            value1 = memory[token];
-                        }
-                        else
-                        {
-                            value1 = token;
-                        }
-                    }
-                    else if (i == 3)
-                    {
-                        if (token.at(0) == '&')
-                        {
-                            string var;
-
-                            try
-                            {
-                                var = "$" + token.substr(1);
-                            }
-                            catch (const std::out_of_range &oor)
-                            {
-                                cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                                file.close();
-                                remove_file(tmp);
-
-                                exit(1);
-                            }
-
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            value2 = memory[value];
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            value2 = memory[token];
-                        }
-                        else
-                        {
-                            value2 = token;
-                        }
-
-                        // Perform the operation
-                        bool condition;
-
-                        try
-                        {
-                            condition = (log == EQL && !(stof(value1) == stof(value2))) ||
-                                        (log == GTR && !(stof(value1) > stof(value2))) ||
-                                        (log == LSS && !(stof(value1) < stof(value2))) ||
-                                        (log == GEQ && !(stof(value1) >= stof(value2))) ||
-                                        (log == LEQ && !(stof(value1) <= stof(value2))) ||
-                                        (log == NEQ && !(stof(value1) != stof(value2))) ||
-                                        (log == SEQL && !(value1 == value2)) || (log == SNEQ && !(value1 != value2));
-                        }
-                        catch (const std::invalid_argument &ia)
-                        {
-                            cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-
-                        // If the condition is true, jump to the line specified
-                        if (condition)
-                        {
-                            line_num = pairs[(line_num + 1) + 1] - 1;
-
-                            file.clear();
-                            file.seekg(lines[line_num]);
-
-                            goto outer;
-                        }
-                    }
-                }
-                else if (op == JMP)
-                {
-                    try
-                    {
-                        if (token.at(0) == '&')
-                        {
-                            string var = "$" + token.substr(1);
-                            string value = "$" + memory[var];
-
-                            // Do something with value
-                            line_num = stoi(memory[value]) - 1;
-                        }
-                        else if (token.at(0) == '$')
-                        {
-                            line_num = stoi(memory[token]) - 1;
-                        }
-                        else
-                        {
-                            line_num = stoi(token) - 1;
-                        }
-                    }
-                    catch (const std::invalid_argument &ia)
-                    {
-                        cout << "Index Error: Line " << line_num + 1 << ": Invalid jump index!" << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-                    catch (const std::out_of_range &oor)
-                    {
-                        cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-
-                    // Jump to the line specified
-                    file.clear();
-                    file.seekg(lines[line_num]);
-                    goto outer;
-                }
-                else if (op == ARR)
-                {
-                    try
+                    else if (op == MOV)
                     {
                         if (i == 1)
                         {
-                            arr_name = token;
+                            key = token;
                         }
-                        else if (i == 2)
+                        else
                         {
-                            // Find the index
-                            if (token.at(0) == '$')
-                                index = to_string(stoi(memory[token]));
-                            else
-                                index = to_string(stoi(token));
+                            update_map(memory, key, eval(token, memory));
+                            break;
                         }
-                        else if (i == 3)
+                    }
+                    else if (op == INT)
+                    {
+                        if (i == 1)
                         {
-                            // Assign the value
-                            if (token.at(0) == '$')
-                                val = memory[token];
-                            else
-                                val = token;
-
-                            update_map(memory, arr_name + "(" + index + ")", val);
+                            key = token;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                update_map(memory, key, to_string(stoi(eval(token, memory))));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Error: Line " << line_num + 1 << ": "
+                                     << "Cast to int failed\n";
+                                exit(1);
+                            }
 
                             break;
                         }
                     }
-                    catch (const std::invalid_argument &ia)
-                    {
-                        cout << "Type Error: Line " << line_num + 1 << ": We only deal with floats!" << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-                }
-                else if (op == ARRI)
-                {
-                    try
-                    {
-                        if (i == 1)
-                        {
-                            arr_name = token;
-                        }
-                        else
-                        {
-                            // Find the value
-                            if (token.at(0) == '$')
-                                val = memory[token];
-                            else if (token.at(0) == '&')
-                                val = memory["$" + memory["$" + token.substr(1)]];
-                            else
-                                val = token;
-
-                            // Assign the value
-                            update_map(memory, arr_name + "(" + to_string(i - 2) + ")", val);
-                        }
-                    }
-                    catch (const out_of_range &oor)
-                    {
-                        cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-                }
-                else if (op == ARRV)
-                {
-                    try
+                    else if (op == ADD || op == SUB || op == MUL || op == DIV || op == MOD || op == POW)
                     {
                         if (i == 1)
                         {
@@ -1259,151 +703,342 @@ outer:
                         }
                         else if (i == 2)
                         {
-                            // Find the array name
-                            arr_name = token;
+                            value1 = eval(token, memory);
                         }
                         else if (i == 3)
                         {
-                            // Assign the value
-                            if (token.at(0) == '$')
-                                index = to_string(stoi(memory[token]));
-                            else
-                                index = to_string(stoi(token));
+                            value2 = eval(token, memory);
 
-                            update_map(memory, key, memory[arr_name + "(" + index + ")"]);
+                            double result;
+
+                            try
+                            {
+                                if (op == ADD)
+                                    result = stod(value1) + stod(value2);
+                                else if (op == SUB)
+                                    result = stod(value1) - stod(value2);
+                                else if (op == MUL)
+                                    result = stod(value1) * stod(value2);
+                                else if (op == DIV)
+                                    result = stod(value1) / stod(value2);
+                                else if (op == MOD)
+                                    result = modulo(stod(value1), stod(value2));
+                                else if (op == POW)
+                                    result = pow(stod(value1), stod(value2));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Type Error: Line " << line_num + 1 << ": We only deal with doubles!\n";
+                                exit(1);
+                            }
+
+                            update_map(memory, key, to_string(result));
+                            break;
+                        }
+                    }
+                    else if (op == EXPR)
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                            exp = "";
+                        }
+                        else
+                        {
+                            exp += eval(token, memory) + " ";
+                        }
+                    }
+                    else if (op == IF)
+                    {
+                        if (i == 1)
+                        {
+                            if (token == "EQL")
+                                log = EQL;
+                            else if (token == "NEQ")
+                                log = NEQ;
+                            else if (token == "LSS")
+                                log = LSS;
+                            else if (token == "LEQ")
+                                log = LEQ;
+                            else if (token == "GTR")
+                                log = GTR;
+                            else if (token == "GEQ")
+                                log = GEQ;
+                            else if (token == "SEQL")
+                                log = SEQL;
+                            else if (token == "SNEQ")
+                                log = SNEQ;
+                            else
+                            {
+                                cerr << "Error: Line " << line_num + 1 << ": " << token
+                                     << " is not a valid logical operator\n";
+                                exit(1);
+                            }
+                        }
+                        else if (i == 2)
+                        {
+                            value1 = eval(token, memory);
+                        }
+                        else if (i == 3)
+                        {
+                            value2 = eval(token, memory);
+
+                            bool condition;
+
+                            try
+                            {
+                                condition = (log == EQL && !(stod(value1) == stod(value2))) ||
+                                            (log == NEQ && !(stod(value1) != stod(value2))) ||
+                                            (log == LSS && !(stod(value1) < stod(value2))) ||
+                                            (log == LEQ && !(stod(value1) <= stod(value2))) ||
+                                            (log == GTR && !(stod(value1) > stod(value2))) ||
+                                            (log == GEQ && !(stod(value1) >= stod(value2))) ||
+                                            (log == SEQL && !(value1 == value2)) ||
+                                            (log == SNEQ && !(value1 != value2));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Type Error: Line " << line_num + 1 << ": We only deal with doubles!\n";
+                                exit(1);
+                            }
+
+                            if (condition)
+                            {
+                                line_num = pairs[(line_num + 1) + 1] - 1;
+                                goto outer;
+                            }
 
                             break;
                         }
                     }
-                    catch (const std::invalid_argument &ia)
+                    else if (op == JMP)
                     {
-                        cout << "Type Error: Line " << line_num + 1 << ": Index should be integer only!" << endl;
-
-                        file.close();
-                        remove_file(tmp);
-
-                        exit(1);
-                    }
-                }
-                else if (op == STR)
-                {
-                    string str;
-
-                    if (token.at(0) == '&')
-                    {
-                        string var;
-
                         try
                         {
-                            var = "$" + token.substr(1);
+                            line_num = stoi(eval(token, memory)) - 1;
                         }
-                        catch (const std::out_of_range &oor)
+                        catch (const invalid_argument &ia)
                         {
-                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
+                            cerr << "Index Error: Line " << line_num + 1 << ": Invalid jump index!\n";
                             exit(1);
                         }
 
-                        string value = "$" + memory[var];
-
-                        // Do something with value
-                        str = memory[value];
+                        goto outer;
                     }
-                    else if (token.at(0) == '$')
+                    else if (op == ARR)
                     {
-                        str = memory[token];
+                        if (i == 1)
+                        {
+                            arr_name = token;
+                        }
+                        else if (i == 2)
+                        {
+                            try
+                            {
+                                index = to_string(stoi(eval(token, memory)));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Type Error: Line " << line_num + 1 << ": Index must be an integer!\n";
+                                exit(1);
+                            }
+                        }
+                        else if (i == 3)
+                        {
+                            update_map(memory, arr_name + "(" + index + ")", eval(token, memory));
+                            break;
+                        }
                     }
-                    else
+                    else if (op == ARRI)
                     {
-                        str = token;
+                        if (i == 1)
+                            arr_name = token;
+                        else
+                            update_map(memory, arr_name + "(" + to_string(i - 2) + ")", eval(token, memory));
                     }
-
-                    // Convert the string to c style string
-                    for (int i = 0; i < str.length(); i++)
+                    else if (op == ARRV)
                     {
-                        char c[2] = {str.at(i), '\0'};
-                        string s(c);
-                        update_map(memory, token + "(" + to_string(i) + ")", s);
-                    }
+                        if (i == 1)
+                        {
+                            key = token;
+                        }
+                        else if (i == 2)
+                        {
+                            arr_name = token;
+                        }
+                        else if (i == 3)
+                        {
+                            try
+                            {
+                                index = to_string(stoi(eval(token, memory)));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Type Error: Line " << line_num + 1 << ": Index must be an integer!\n";
+                                exit(1);
+                            }
 
-                    update_map(memory, token + "(" + to_string(str.length()) + ")", NULL_OP);
+                            update_map(memory, key, memory[arr_name + "(" + index + ")"]);
+                            break;
+                        }
+                    }
+                    else if (op == STR)
+                    {
+                        string str = eval(token, memory);
+
+                        for (int i = 0; i < str.length(); i++)
+                            update_map(memory, token + "(" + to_string(i) + ")", string(1, str.at(i)));
+
+                        update_map(memory, token + "(" + to_string(str.length()) + ")", string("NULL"));
+                    }
+                    else if (op == CAT)
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                            string_sum = "";
+                        }
+                        else
+                        {
+                            string_sum += eval(token, memory);
+                        }
+                    }
+                    else if (op == CALL)
+                    {
+                        if (i == 1)
+                        {
+                            string str = dir + eval(token, memory) + ".fasml";
+
+                            ifstream file;
+                            file.open(str, ios_base::binary);
+
+                            if (!file.is_open())
+                            {
+                                cerr << argv[0] << ": error: " << str << ": No such file\n";
+                                exit(1);
+                            }
+
+                            func_name_stk.push(func_name);
+
+                            if (lines_map.find(func_name) == lines_map.end())
+                                lines_map[func_name] = lines;
+
+                            if (pairs_map.find(func_name) == pairs_map.end())
+                                pairs_map[func_name] = pairs;
+
+                            line_num_stk.push(line_num);
+                            memory_stk.push(memory);
+
+                            func_name = str;
+                            func_args.push(func_name);
+
+                            if (lines_map.find(func_name) == lines_map.end())
+                            {
+                                for (string line; getline(file, line);)
+                                {
+                                    line = regex_replace(line, regex("!.*"), "");
+                                    func_lines.push_back(line);
+                                }
+                            }
+                            else
+                            {
+                                func_lines = lines_map[func_name];
+                            }
+
+                            file.close();
+                        }
+                        else
+                        {
+                            func_args.push(eval(token, memory));
+                        }
+                    }
+                    else if (op == RECV)
+                    {
+                        if (ret_vals.empty())
+                            break;
+
+                        update_map(memory, token, ret_vals.front());
+                        ret_vals.pop();
+                    }
+                    else if (op == RET)
+                    {
+                        ret_vals.push(eval(token, memory));
+                    }
+                    else if (op == BYE)
+                    {
+                        try
+                        {
+                            exit(stoi(eval(token, memory)));
+                        }
+                        catch (const invalid_argument &ia)
+                        {
+                            cerr << "Type Error: Line " << line_num + 1 << ": Exit code must be an integer!\n";
+                            exit(1);
+                        }
+                    }
+                }
+
+                i++;
+            }
+
+            if (i != 0)
+            {
+                if (op == EXPR)
+                {
+                    update_map(memory, key, to_string(expr_eval(exp)));
                 }
                 else if (op == CAT)
                 {
-                    string str;
-
-                    if (token.at(0) == '&')
-                    {
-                        string var;
-
-                        try
-                        {
-                            var = "$" + token.substr(1);
-                        }
-                        catch (const std::out_of_range &oor)
-                        {
-                            cout << "Error: Line " << line_num + 1 << ": " << oor.what() << endl;
-
-                            file.close();
-                            remove_file(tmp);
-
-                            exit(1);
-                        }
-
-                        string value = "$" + memory[var];
-
-                        // Do something with value
-                        str = memory[value];
-                    }
-                    else if (token.at(0) == '$')
-                    {
-                        str = memory[token];
-                    }
-                    else
-                    {
-                        str = token;
-                    }
-
-                    string_sum += str;
+                    update_map(memory, key, string_sum);
                 }
-                else if (op == TAC)
+                else if (op == CALL)
                 {
-                    update_map(memory, token, string_sum);
-                    string_sum = "";
+                    while (!ret_vals.empty())
+                        ret_vals.pop();
 
-                    break; /* 2 tokens */
+                    line_num = 0;
+                    lines = func_lines;
+
+                    memory.clear();
+                    memory["$ARGC"] = to_string(func_args.size());
+
+                    for (int i = 0; !func_args.empty(); i++)
+                    {
+                        memory["$" + to_string(i)] = func_args.front();
+                        func_args.pop();
+                    }
+
+                    define_variables(memory);
+
+                    create_pairs(lines, pairs);
+                    create_labels(lines, memory);
+
+                    continue;
                 }
-                else if (op == BYE)
+                else if (op == RET)
                 {
-                    file.close();
-                    remove_file(tmp);
-
-                    try
-                    {
-                        exit(stoi(token));
-                    }
-                    catch (const std::invalid_argument &ia)
-                    {
-                        cout << "Type Error: Line " << line_num + 1 << ": Exit code should be integer only!" << endl;
-                        exit(1);
-                    }
+                    break;
                 }
             }
 
-            i++;
+            line_num++;
         }
 
-        line_num++;
+        if (func_name_stk.empty())
+            break;
+
+        lines = lines_map[func_name_stk.top()];
+        pairs = pairs_map[func_name_stk.top()];
+
+        func_name = func_name_stk.top();
+        func_name_stk.pop();
+
+        line_num = line_num_stk.top() + 1;
+        line_num_stk.pop();
+
+        memory = memory_stk.top();
+        memory_stk.pop();
     }
-
-    // Copied file closed
-    file.close();
-
-    // Deleting the copied tmp file
-    remove_file(tmp);
 
     return 0;
 }

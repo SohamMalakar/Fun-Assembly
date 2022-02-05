@@ -1,0 +1,18 @@
+
+IF LSS $ARGC 2
+[
+    PRT Usage: $0 <number> $ENDL
+    BYE 1
+]
+
+INT $i $1
+
+IF LEQ $i 0
+[
+    RET
+]
+
+PRT $i
+PRT $SPC
+SUB $i $i 1
+CALL rec $i
