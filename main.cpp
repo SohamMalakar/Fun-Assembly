@@ -568,6 +568,7 @@ int main(int argc, char **argv)
             int i = 0;
             string token;
             op_code op;
+            log_code log;
             string arr_name;
             string index;
             vector<string> func_lines;
@@ -579,8 +580,6 @@ int main(int argc, char **argv)
 
             while (getline(ss, token, ' '))
             {
-                log_code log;
-
                 if (i == 0)
                 {
                     if (token == "PRT")
