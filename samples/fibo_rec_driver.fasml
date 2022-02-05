@@ -1,0 +1,14 @@
+IF LSS $ARGC 2
+[
+    PRT Usage: $0 <number> $ENDL
+    BYE 1
+]
+
+MOV $num $1
+
+CALL fibo_rec $num
+RECV $fibo
+
+INT $fibo $fibo
+
+PRT The $num th fibonacci number is $fibo $ENDL

@@ -1,0 +1,17 @@
+IF LSS $1 2
+[
+    RET $1
+]
+
+MOV $t $1
+
+SUB $t $t 1
+CALL fibo_rec $t
+RECV $a
+
+SUB $t $t 1
+CALL fibo_rec $t
+RECV $b
+
+EXPR $out $a + $b
+RET $out
