@@ -11,3 +11,6 @@ fasml: *.o
 
 clean:
 	rm *.o fasml
+
+install:
+	make && sudo cp -f fasml /usr/local/bin/ && make clean
