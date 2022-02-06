@@ -39,7 +39,7 @@ The language has a built-in Module System to create modules. It is pretty simila
 
 ## Installation
 
-There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/latest) section. Download the release and run the installation script.
+There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/latest) section. Download the archive from there and extract the files. Then, run the installation script.
 
 ---
 
@@ -53,7 +53,7 @@ If you don't find any suitable version for your system, please follow the instru
 
 2. Extract the files. (**_NOTE:_** You can extract the files using [7-Zip](https://www.7-zip.org/) or any other program)
 
-3. Run the `install.bat` script. It will copy `fasml.exe` to the `C:\Windows` directory.
+3. Run the `install.bat` script.
 
 > **_NOTE:_** Make sure you have the latest [g++](https://winlibs.com/) compiler installed in your system.
 
