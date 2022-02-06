@@ -39,7 +39,13 @@ The language has a built-in Module System to create modules. It is pretty simila
 
 ## Installation
 
-There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/latest) section. If you don't find any suitable version for your system, please compile it manually.
+There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/latest) section. Download the release and run the installation script.
+
+---
+
+## Manual Installation
+
+If you don't find any suitable version for your system, please follow the instructions below.
 
 ### Windows
 
@@ -47,39 +53,33 @@ There are few pre-compiled binaries available in the [release](https://github.co
 
 2. Extract the files. (**_NOTE:_** You can extract the files using [7-Zip](https://www.7-zip.org/) or any other program)
 
-3. Run the `build.bat` script. It will compile the program and create a `fasml.exe` file.
-
-4. Open the command prompt in the folder where the `fasml.exe` file is present.
-
-5. Now, type the following command to run the program.
-
-   ```
-   > fasml.exe [FILENAME]
-   ```
-
-Here, [FILENAME] refers to the `.fasml` file you want to compile.
+3. Run the `install.bat` script. It will copy `fasml.exe` to the `C:\Windows` directory.
 
 > **_NOTE:_** Make sure you have the latest [g++](https://winlibs.com/) compiler installed in your system.
 
 ### GNU/Linux
 
-Run the following commands to compile the program.
+Run the following commands in a terminal.
 
 ```
 $ git clone https://github.com/SohamMalakar/Fun-Assembly.git
 $ cd Fun-Assembly
-$ make
+$ make install
 ```
 
-Now, you can run the program by typing the following command.
-
-```
-$ ./fasml [FILENAME]
-```
-
-Here, [FILENAME] refers to the `.fasml` file you want to compile.
+That's it!
 
 > **_NOTE:_** Make sure you have git, make and g++ installed in your system.
+
+---
+
+## Usage
+
+After installing the Fun Assembly Compiler, you can run the following command to run *.fasml files.
+
+```
+$ fasml <filename> [optional arguments]
+```
 
 ---
 
@@ -267,7 +267,7 @@ To convert a variable to integer, we use the keyword `INT`.
 INT $var1 $var2
 ```
 
-Here the compiler converts the variable `$var2` to integer and assign it to the variable `$var1`.
+Here, the compiler converts the variable `$var2` to integer and assign it to the variable `$var1`.
 
 ---
 
@@ -443,7 +443,7 @@ Here, the compiler terminates the program with the exit code 0.
 To run the interpreter with command line arguments, do the following:
 
 ```
-$ ./fasml samples/command_line_args.fasml C C++ Python Java
+$ fasml samples/command_line_args.fasml C C++ Python Java
 ```
 
 Here, we run the file `command_line_args.fasml` with the command line arguments `C`, `C++`, `Python`, and `Java`.
@@ -485,7 +485,7 @@ You can also print them in the following way:
 PRT $0 $1 $2
 ```
 
-> **_NOTE:_** Here `$0` is the file name. And `$1`, `$2`, and so on are the command line arguments. These are predefined.
+> **_NOTE:_** Here, `$0` is the file name. And `$1`, `$2`, and so on are the command line arguments. These are predefined.
 
 ---
 
