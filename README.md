@@ -43,7 +43,7 @@ There are few pre-compiled binaries available in the [release](https://github.co
 
 ---
 
-## Manual Installation
+## Build from Source
 
 If you don't find any suitable version for your system, please follow the instructions below.
 
@@ -75,11 +75,13 @@ That's it!
 
 ## Usage
 
-After installing the Fun Assembly Compiler, you can run the following command to run *.fasml files.
+After installing the Fun Assembly Compiler, you can run the following command to run \*.fasml files.
 
 ```
 $ fasml <filename> [optional arguments]
 ```
+
+> **_NOTE:_** Alternatively, you can use [Joi Akash](https://marketplace.visualstudio.com/items?itemName=SohamMalakar.joiakash) Extension for [Visual Studio Code](https://code.visualstudio.com/) to run \*.fasml files.
 
 ---
 
