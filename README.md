@@ -177,9 +177,11 @@ There are no data types in this language. So, you can assign any type of data to
 
 ---
 
-### Printing Variables
+### Print Keyword
 
-Now, to print the variable, we use the keyword `PRT`.
+#### Print Variables
+
+To print a variable, we use the keyword `PRT`.
 
 ```
 PRT $var1
@@ -187,11 +189,9 @@ PRT $var1
 
 And yes. You can print multiple variables at once.
 
----
+#### Print Special Characters
 
-### Printing Special Characters
-
-Now, to print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we print these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP` respectively.
+To print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we print these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP` respectively.
 
 ```
 PRT Hello World
@@ -207,7 +207,9 @@ It prints 'Hello World!\n'.
 
 ### Taking Inputs
 
-Now, to take input from the keyboard, we use the keyword `SCN`.
+#### Input upto space
+
+To take input from the keyboard, we use the keyword `SCN`.
 
 ```
 SCN $var1
@@ -216,13 +218,27 @@ SCN $var1
 Here, the compiler takes input from the keyboard and assign it to the variable `$var1`.
 And multiple inputs can be taken at once.
 
-Now, to take input upto the next newline character, we use the keyword `SCNL`.
+#### Input upto newline
+
+To take input upto the next newline character, we use the keyword `SCNL`.
 
 ```
 SCNL $var1
 ```
 
 Here, the compiler takes input upto the next newline character from the keyboard and assign it to the variable `$var1`.
+
+---
+
+### Comments
+
+To comment a line, we use the exclamation mark `!`.
+
+```
+! This is a single line comment
+```
+
+> **_NOTE:_** This language doesn't support multi-line comments.
 
 ---
 
@@ -235,8 +251,6 @@ ADD $var3 $var1 $var2
 ```
 
 Here, the compiler adds the values of the variables `$var1` and `$var2` and assign the result to the variable `$var3`.
-
-Now, just replace `ADD` with `SUB`, `MUL`, `DIV`, `MOD`, and `POW` to get the result of subtraction, multiplication, division, modulo, and power respectively.
 
 But it'll convert the variables to floats before performing the operation.
 
@@ -275,15 +289,29 @@ Here, the compiler converts the variable `$var2` to integer and assign it to the
 
 ### Labels
 
-Instead of separate `loop structures` or `if-else structures` we incorporate only `IF` with `JMP` to perform even the complex tasks. To work with `JMP` easily, we have introduced `labels` in this language.
+In this language, we don't have `loops`. Instead, we use labels to jump to a specific point in the program.
 
-The `label` is a special type of variable which will hold it's own line number into the given label.
+To create a label, we use the keyword `>`.
 
 ```
-> $START
+> $label
 ```
 
-It will create a `label` named `$START` which will contain the line number where it is introduced.
+Here, the compiler creates a label with the name `$label`. It can be used to jump to the label.
+
+> **_NOTE:_** Behind the scenes, the compiler creates a variable with the same name as the label and stores the current line number in the variable.
+
+---
+
+### Jumping to Labels
+
+To jump to a label, we use the keyword `JMP`.
+
+```
+JMP $label
+```
+
+Here, the control jumps to the `$label`.
 
 ---
 
@@ -292,12 +320,12 @@ It will create a `label` named `$START` which will contain the line number where
 To implement if-else statements, we use the keywords `IF` and `JMP`.
 
 ```
-IF EQL $var1 $var2
+IF LSS $var1 $var2
 [
     PRT SUCCESS
     JMP $END
 ]
-IF NEQ $var1 $var2
+IF GEQ $var1 $var2
 [
     PRT FAILURE
     JMP $END
@@ -306,19 +334,17 @@ IF NEQ $var1 $var2
 > $END
 ```
 
-Here, the compiler checks if the values of the variables `$var1` and `$var2` are equal.
-If they are equal, the compiler prints 'SUCCESS' and jump to the label `$END`.
-If they are not equal (else), the compiler prints 'FAILURE' and jump to the label `$END`.
+Here, the compiler checks if the value of `$var1` is less than the value of `$var2`. If it is, it prints `SUCCESS` and jumps to the label `$END`. Otherwise, it prints `FAILURE` and jumps to the label `$END`.
 
-There is no ELSE keyword. So, this is the only way to implement if-else statements.
+There is no `ELSE` keyword. So, this is the only way to implement if-else statements.
 
-To get the desired condition, replace the `EQL` with the other logical operators.
+> **_NOTE:_** 8 Logical Operators and their meanings are provided [above](#keywords).
 
 ---
 
 ### Loops
 
-To implement loops, we use the keyword `JMP` with `labels`.
+To implement `loops`, we use the keyword `JMP` with labels.
 
 ```
 > $LOOP
@@ -328,21 +354,23 @@ IF EQL $var1 $var2
 ]
 ```
 
-Here, the compiler checks if the values of the variables `$var1` and `$var2` are equal.
-If they are equal, the compiler jumps back to the label `$LOOP`.
-If they are not equal, the compiler exits the loop.
+Here, the compiler checks if the values of the variables `$var1` and `$var2` are equal. If they are, the compiler jumps to the label `$LOOP`. Otherwise, it exits the loop.
 
 ---
 
 ### Arrays
 
-To store an array, we use the keyword `ARR`.
+#### Store an element
+
+To store an element in an array, we use the keyword `ARR`.
 
 ```
 ARR $array $index $value
 ```
 
-Here, the compiler assigns the value `$value` to the array `$array` at the index `$index`.
+Here, the compiler assigns the `$value` to the `$array` at the `$index` position.
+
+#### Initialize an array
 
 To initialize an array, we use the keyword `ARRI`.
 
@@ -350,17 +378,21 @@ To initialize an array, we use the keyword `ARRI`.
 ARRI $array 1 2 3 4 5
 ```
 
-Here, the compiler initializes the array `$array` with the values `1`, `2`, `3`, `4`, and `5`.
+Here, the compiler initializes the `$array` with the values `1`, `2`, `3`, `4`, and `5`.
 
-To get the value of an array, we use the keyword `ARRV`.
+#### Access an element
+
+To access an element in an array, we use the keyword `ARRV`.
 
 ```
 ARRV $var1 $array $index
 ```
 
-Here, the compiler assigns the value of the array `$array` at the index `$index` to the variable `$var1`.
+Here, the compiler assigns the value at the `$index` position in the `$array` to the variable `$var1`.
 
-Now, to print the value of the element at the index `$index`, we use the keyword `PRT`.
+#### Print an element
+
+Now, to print the element at the `$index` position in the `$array`, we can use any of the following methods:
 
 _Method 1:_
 
@@ -370,8 +402,7 @@ ARRV $var1 $array $index
 PRT $var1
 ```
 
-Here, the compiler assigns the value of the array `$array` at the index `$index` to the variable `$var1`.
-Then the compiler prints the value of the variable `$var1`.
+Here, the compiler assigns the value at the `$index` position in the `$array` to the variable `$var1`. Then, it prints the value of `$var1`.
 
 _Method 2:_
 
@@ -379,7 +410,7 @@ _Method 2:_
 PRT $array(0)
 ```
 
-Here, the compiler prints the value of the element at the index `$index` of the array `$array`.
+Here, the compiler prints the value at the 0th position in the `$array`.
 
 > **_NOTE:_** However, you can't iterate an array using method 2.
 
@@ -387,9 +418,9 @@ Here, the compiler prints the value of the element at the index `$index` of the 
 
 ### Strings
 
-We can perform various string operations in this programming language. The language contains two keywords and two logical operators and a special `NULL` character to deal with strings.
+#### Create a string
 
-`STR` keyword is used for storing the given string as a character array and add a `NULL` string at the end.
+To create a string, we use the keyword `STR`.
 
 ```
 PRT Enter your name:
@@ -401,9 +432,29 @@ STR $name
 
 The above code snippet takes a string as input and stores it as a string in the memory.
 
----
+> **_NOTE:_** The compiler creates an array with the same name as the string and stores the string in the array. It also adds a null character at the end of the array.
 
-### String Concatenation
+#### Iterate a string
+
+To iterate a string, use the code snippet below:
+
+```
+STR $str
+MOV $i 0
+
+> $loop
+ARRV $c $str $i
+
+IF SNEQ $c NULL
+[
+    ADD $i $i 1
+    JMP $loop
+]
+```
+
+Here, `NULL` is the null character. It denotes the end of the string.
+
+#### Concatenate multiple strings
 
 To concatenate two or more strings together, we use the keyword `CAT`.
 
@@ -412,18 +463,6 @@ CAT $str3 $str1 $str2
 ```
 
 Here, the `CAT` keyword concatenates the strings `$str1` and `$str2` and assign the result to the variable `$str3`.
-
----
-
-### Comments
-
-To comment a line, we use the exclamation mark `!`.
-
-```
-! This is a comment
-```
-
-It only supports single line comments.
 
 ---
 
