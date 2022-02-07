@@ -177,7 +177,7 @@ There are no data types in this language. So, you can assign any type of data to
 
 ---
 
-### Print Keyword
+### The Print Keyword
 
 #### Print Variables
 
