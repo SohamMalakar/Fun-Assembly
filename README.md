@@ -447,6 +447,7 @@ ARRV $c $str $i
 
 IF SNEQ $c NULL
 [
+    ! code here
     ADD $i $i 1
     JMP $loop
 ]
