@@ -552,8 +552,6 @@ Here, the compiler assigns the values of the returned variables to `$var1` and `
 
 There are some examples in the [samples](https://github.com/SohamMalakar/Fun-Assembly/tree/master/samples) folder. You can analyze them to get a better understanding.
 
-> **_NOTE:_** Make sure these files are in LF format and not in CRLF format.
-
 ---
 
 ## Contribution
