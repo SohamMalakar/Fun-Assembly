@@ -379,8 +379,7 @@ PRT $array(0)
 
 Here, the compiler prints the value of the element at the index `$index` of the array `$array`.
 
-This way of printing an array is not recommended because it's hard coded.
-So, it can't be iterated.
+> **_NOTE:_** However, you can't iterate an array using method 2.
 
 ---
 
