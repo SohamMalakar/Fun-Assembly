@@ -177,9 +177,7 @@ There are no data types in this language. So, you can assign any type of data to
 
 ---
 
-### The Print Keyword
-
-#### Print Variables
+### Printing Variables
 
 To print a variable, we use the keyword `PRT`.
 
@@ -189,7 +187,9 @@ PRT $var1
 
 And yes. You can print multiple variables at once.
 
-#### Print Special Characters
+---
+
+### Printing Special Characters
 
 To print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we print these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP` respectively.
 
