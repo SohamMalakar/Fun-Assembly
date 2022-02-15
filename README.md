@@ -303,7 +303,7 @@ Here, the compiler creates a label with the name `$label`. It can be used to jum
 
 ---
 
-### Jumping to Labels
+### Unconditional Jump
 
 To jump to a label, we use the keyword `JMP`.
 
@@ -447,13 +447,15 @@ ARRV $c $str $i
 
 IF SNEQ $c NULL
 [
-    ! code here
+    PRT $c
     ADD $i $i 1
     JMP $loop
 ]
 ```
 
-Here, `NULL` is the null character. It denotes the end of the string.
+Here, the compiler iterates the string `$str` and prints each character upto the null character.
+
+> **_NOTE:_** Here, `NULL` is the null character. It denotes the end of the string.
 
 #### Concatenate multiple strings
 
@@ -479,17 +481,66 @@ Here, the compiler terminates the program with the exit code 0.
 
 ---
 
+### The `&` Operator
+
+What is the `&` operator? (e.g. `&var`)
+
+It's an indirect operator. It works like pointers but only one level.
+
+#### Working
+
+**_TL;DR:_** `&var` -> `$` + value of `$var`
+
+#### Usage
+
+- We can use the `&` operator to iterate over [command line arguments](#command-line-arguments).
+
+#### Example
+
+Consider the following code snippet:
+
+```
+MOV $var1 3
+MOV $var2 var1
+
+PRT &var2
+```
+
+Output:
+
+```
+3
+```
+
+Here, `&var2` gets converted into `$` + value of `$var2`. So, the compiler treats `&var2` as `$var1`.
+
+---
+
 ### Command Line Arguments
 
-To run the interpreter with command line arguments, do the following:
+#### Execute programs with arguments
 
-```
-$ fasml samples/command_line_args.fasml C C++ Python Java
-```
+To execute a program with arguments, do the following:
 
-Here, we run the file `command_line_args.fasml` with the command line arguments `C`, `C++`, `Python`, and `Java`.
+- Open a new terminal or command prompt and run the following command:
 
-The `command_line_args.fasml` file contains the following code:
+  ```
+  $ fasml samples/iterate_over_args.fasml C C++ Python Java
+  ```
+
+Here, we are running the file [iterate_over_args.fasml](https://github.com/SohamMalakar/Fun-Assembly/blob/master/samples/iterate_over_args.fasml) with the command line arguments `C`, `C++`, `Python`, and `Java`.
+
+#### Accessing arguments
+
+These variables are created by the compiler and are used to access the command line arguments.
+
+- `$0`: The name of the program.
+- `$1`, `$2` and so on: Arguments passed to the program.
+- `$ARGC`: The number of command line arguments.
+
+#### Example
+
+The [iterate_over_args.fasml](https://github.com/SohamMalakar/Fun-Assembly/blob/master/samples/iterate_over_args.fasml) file contains the following code:
 
 ```
 MOV $I 0
@@ -507,26 +558,9 @@ IF LSS $I $ARGC
 ]
 ```
 
-> **_NOTE:_** `$ARGC` is predefined. It contains the number of command line arguments.
+Here, the compiler iterates over the command line arguments and prints them.
 
-Here, we assign the value of the variable `$I` to 0.
-
-Then, we check if the value of the variable `$I` is less than the value of the variable `$ARGC`.
-If it is true, we print the `$I`th argument from the command line.
-
-Then, we increment the value of the variable `$I` by 1.
-
-Finally, we jump back to the label `$LOOP`.
-
-If we look closely,we find it's `PRT` followed by `&I`. It means that we grab the value of the variable `$I` and put a extra `$` before it. So, the interpreter will print the value of `$0`, `$1`, `$2`, and so on.
-
-You can also print them in the following way:
-
-```
-PRT $0 $1 $2
-```
-
-> **_NOTE:_** Here, `$0` is the file name. And `$1`, `$2`, and so on are the command line arguments. These are predefined.
+> **_NOTE:_** `&I` gets converted into `$0`, `$1`, `$2`, and so on every time the compiler executes the loop.
 
 ---
 
