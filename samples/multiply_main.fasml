@@ -1,0 +1,5 @@
+
+CALL multiply 5 12
+RECV $out
+
+PRT $out $ENDL

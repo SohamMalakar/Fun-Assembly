@@ -1,0 +1,24 @@
+
+INT $a $1
+INT $b $2
+
+IF EQL $b 0
+[
+    RET 0
+]
+
+MOD $r $b 2
+DIV $b1 $b 2
+
+CALL multiply $a $b1
+RECV $out1
+
+MUL $out1 $out1 2
+
+IF EQL $r 0
+[
+    RET $out1
+]
+
+ADD $out1 $out1 $a
+RET $out1
