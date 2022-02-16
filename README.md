@@ -75,7 +75,7 @@ That's it!
 
 ## Usage
 
-After installing the Fun Assembly Compiler, you can run the following command to run \*.fasml files.
+After installing the Fun Assembly Interpreter, you can run the following command to run \*.fasml files.
 
 ```
 $ fasml <filename> [optional arguments]
@@ -99,7 +99,7 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 25 reserved Keywords and 8 Logical Operators present in this language which get recognized by this compiler.
+There are total 25 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
 
 The 25 Keywords with their functions are provided here:
 
@@ -158,8 +158,8 @@ Here is the Hello World program:
 PRT Hello World
 ```
 
-Here, the compiler prints the tokens 'Hello' and 'World'.
-Tokens are separated by spaces. The compiler will ignore the spaces.
+Here, the interpreter prints the tokens 'Hello' and 'World'.
+Tokens are separated by spaces. The interpreter will ignore the spaces.
 But it'll print the spaces in between the tokens.
 
 ---
@@ -215,7 +215,7 @@ To take input from the keyboard, we use the keyword `SCN`.
 SCN $var1
 ```
 
-Here, the compiler takes input from the keyboard and assign it to the variable `$var1`.
+Here, the interpreter takes input from the keyboard and assign it to the variable `$var1`.
 And multiple inputs can be taken at once.
 
 #### Input upto newline
@@ -226,7 +226,7 @@ To take input upto the next newline character, we use the keyword `SCNL`.
 SCNL $var1
 ```
 
-Here, the compiler takes input upto the next newline character from the keyboard and assign it to the variable `$var1`.
+Here, the interpreter takes input upto the next newline character from the keyboard and assign it to the variable `$var1`.
 
 ---
 
@@ -250,7 +250,7 @@ To add, subtract, multiply, divide, modulo, and power two variables, we use the 
 ADD $var3 $var1 $var2
 ```
 
-Here, the compiler adds the values of the variables `$var1` and `$var2` and assign the result to the variable `$var3`.
+Here, the interpreter adds the values of the variables `$var1` and `$var2` and assign the result to the variable `$var3`.
 
 But it'll convert the variables to floats before performing the operation.
 
@@ -271,7 +271,7 @@ EXPR $out ( $var1 + 5 ) * -10 / $var2
 PRT $out $ENDL
 ```
 
-Here, the compiler evaluates the expression `( $var1 + 5 ) * -10 / $var2` and assign the result to the variable `$out`.
+Here, the interpreter evaluates the expression `( $var1 + 5 ) * -10 / $var2` and assign the result to the variable `$out`.
 
 ---
 
@@ -283,7 +283,7 @@ To convert a variable to integer, we use the keyword `INT`.
 INT $var1 $var2
 ```
 
-Here, the compiler converts the variable `$var2` to integer and assign it to the variable `$var1`.
+Here, the interpreter converts the variable `$var2` to integer and assign it to the variable `$var1`.
 
 ---
 
@@ -297,9 +297,9 @@ To create a label, we use the keyword `>`.
 > $label
 ```
 
-Here, the compiler creates a label with the name `$label`. It can be used to jump to the label.
+Here, the interpreter creates a label with the name `$label`. It can be used to jump to the label.
 
-> **_NOTE:_** Behind the scenes, the compiler creates a variable with the same name as the label and stores the current line number in the variable.
+> **_NOTE:_** Behind the scenes, the interpreter creates a variable with the same name as the label and stores the current line number in the variable.
 
 ---
 
@@ -334,7 +334,7 @@ IF GEQ $var1 $var2
 > $END
 ```
 
-Here, the compiler checks if the value of `$var1` is less than the value of `$var2`. If it is, it prints `SUCCESS` and jumps to the label `$END`. Otherwise, it prints `FAILURE` and jumps to the label `$END`.
+Here, the interpreter checks if the value of `$var1` is less than the value of `$var2`. If it is, it prints `SUCCESS` and jumps to the label `$END`. Otherwise, it prints `FAILURE` and jumps to the label `$END`.
 
 There is no `ELSE` keyword. So, this is the only way to implement if-else statements.
 
@@ -354,7 +354,7 @@ IF EQL $var1 $var2
 ]
 ```
 
-Here, the compiler checks if the values of the variables `$var1` and `$var2` are equal. If they are, the compiler jumps to the label `$LOOP`. Otherwise, it exits the loop.
+Here, the interpreter checks if the values of the variables `$var1` and `$var2` are equal. If they are, the interpreter jumps to the label `$LOOP`. Otherwise, it exits the loop.
 
 ---
 
@@ -368,7 +368,7 @@ To store an element in an array, we use the keyword `ARR`.
 ARR $array $index $value
 ```
 
-Here, the compiler assigns the `$value` to the `$array` at the `$index` position.
+Here, the interpreter assigns the `$value` to the `$array` at the `$index` position.
 
 #### Initialize an array
 
@@ -378,7 +378,7 @@ To initialize an array, we use the keyword `ARRI`.
 ARRI $array 1 2 3 4 5
 ```
 
-Here, the compiler initializes the `$array` with the values `1`, `2`, `3`, `4`, and `5`.
+Here, the interpreter initializes the `$array` with the values `1`, `2`, `3`, `4`, and `5`.
 
 #### Access an element
 
@@ -388,7 +388,7 @@ To access an element in an array, we use the keyword `ARRV`.
 ARRV $var1 $array $index
 ```
 
-Here, the compiler assigns the value at the `$index` position in the `$array` to the variable `$var1`.
+Here, the interpreter assigns the value at the `$index` position in the `$array` to the variable `$var1`.
 
 #### Print an element
 
@@ -402,7 +402,7 @@ ARRV $var1 $array $index
 PRT $var1
 ```
 
-Here, the compiler assigns the value at the `$index` position in the `$array` to the variable `$var1`. Then, it prints the value of `$var1`.
+Here, the interpreter assigns the value at the `$index` position in the `$array` to the variable `$var1`. Then, it prints the value of `$var1`.
 
 _Method 2:_
 
@@ -410,7 +410,7 @@ _Method 2:_
 PRT $array(0)
 ```
 
-Here, the compiler prints the value at the 0th position in the `$array`.
+Here, the interpreter prints the value at the 0th position in the `$array`.
 
 > **_NOTE:_** However, you can't iterate an array using method 2.
 
@@ -432,7 +432,7 @@ STR $name
 
 The above code snippet takes a string as input and stores it as a string in the memory.
 
-> **_NOTE:_** The compiler creates an array with the same name as the string and stores the string in the array. It also adds a null character at the end of the array.
+> **_NOTE:_** The interpreter creates an array with the same name as the string and stores the string in the array. It also adds a null character at the end of the array.
 
 #### Iterate a string
 
@@ -453,7 +453,7 @@ IF SNEQ $c NULL
 ]
 ```
 
-Here, the compiler iterates the string `$str` and prints each character upto the null character.
+Here, the interpreter iterates the string `$str` and prints each character upto the null character.
 
 > **_NOTE:_** Here, `NULL` is the null character. It denotes the end of the string.
 
@@ -477,7 +477,7 @@ To terminate the program, we use the keyword `BYE`.
 BYE 0
 ```
 
-Here, the compiler terminates the program with the exit code 0.
+Here, the interpreter terminates the program with the exit code 0.
 
 ---
 
@@ -512,7 +512,7 @@ Output:
 3
 ```
 
-Here, `&var2` gets converted into `$` + value of `$var2`. So, the compiler treats `&var2` as `$var1`.
+Here, `&var2` gets converted into `$` + value of `$var2`. So, the interpreter treats `&var2` as `$var1`.
 
 ---
 
@@ -532,7 +532,7 @@ Here, we are running the file [iterate_over_args.fasml](https://github.com/Soham
 
 #### Accessing arguments
 
-These variables are created by the compiler and are used to access the command line arguments.
+These variables are created by the interpreter and are used to access the command line arguments.
 
 - `$0`: The name of the program.
 - `$1`, `$2` and so on: Arguments passed to the program.
@@ -558,9 +558,9 @@ IF LSS $I $ARGC
 ]
 ```
 
-Here, the compiler iterates over the command line arguments and prints them.
+Here, the interpreter iterates over the command line arguments and prints them.
 
-> **_NOTE:_** `&I` gets converted into `$0`, `$1`, `$2`, and so on every time the compiler executes the loop.
+> **_NOTE:_** `&I` gets converted into `$0`, `$1`, `$2`, and so on every time the interpreter executes the loop.
 
 ---
 
@@ -580,7 +580,7 @@ To create modules, follow the following steps:
   RET $var1 $var2
   ```
 
-  Here, the compiler returns the values of the variables `$var1` and `$var2` to the caller.
+  Here, the interpreter returns the values of the variables `$var1` and `$var2` to the caller.
 
 > **_NOTE:_** A module is nothing but a typical fasml file with `RET` keyword(s).
 
@@ -592,7 +592,7 @@ To call the module, use the keyword `CALL`.
 CALL module_name $arg1 $arg2
 ```
 
-Here, the compiler calls the module `module_name` and passes the values of the arguments `$arg1` and `$arg2` to it.
+Here, the interpreter calls the module `module_name` and passes the values of the arguments `$arg1` and `$arg2` to it.
 
 > **_NOTE:_** The `module_name` should be the same as the module name without the extension.
 
@@ -604,7 +604,7 @@ To access the arguments of the module use `$1`, `$2`, and so on.
 MOV $var1 $1
 ```
 
-Here, the compiler assigns the value of the 1st argument to the variable `$var1`.
+Here, the interpreter assigns the value of the 1st argument to the variable `$var1`.
 
 > **_NOTE:_** `$0` is the relative path of the module and `$ARGC` is the number of arguments passed to the module.
 
@@ -616,7 +616,7 @@ To receive the return values from the module, use the keyword `RECV` after calli
 RECV $var1 $var2
 ```
 
-Here, the compiler assigns the values of the returned variables to `$var1` and `$var2`.
+Here, the interpreter assigns the values of the returned variables to `$var1` and `$var2`.
 
 > **_NOTE:_** Before calling another module, you have to receive the return values from the previous module. Otherwise, the return values will be lost.
 
