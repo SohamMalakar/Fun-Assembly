@@ -20,29 +20,32 @@ using namespace std;
 
 enum op_code
 {
-    PRT,  // Prints the tokens
-    SCN,  // Takes inputs upto the next space
-    SCNL, // Takes inputs upto the next newline
-    MOV,  // Assigns a value to a variable
-    INT,  // Converts a variable to an integer
-    ADD,  // Adds two variables
-    SUB,  // Subtracts two variables
-    MUL,  // Multiplies two variables
-    DIV,  // Divides two variables
-    MOD,  // Modulo of two variables
-    POW,  // Raises one variable to the power of another
-    EXPR, // Evaluates an expression
-    IF,   // If condition is true, executes the block
-    JMP,  // Jumps to the specified line
-    ARR,  // Stores a value in an array
-    ARRI, // Initializes an array
-    ARRV, // Retrieves a value from an array
-    BYE,  // Exits the program
-    STR,  // Stores strings as char arrays
-    CAT,  // Concatenates strings
-    CALL, // Calls a function
-    RECV, // Receives values from a function
-    RET   // Returns from a function
+    PRT,    // Prints the tokens
+    SCN,    // Takes inputs upto the next space
+    SCNL,   // Takes inputs upto the next newline
+    MOV,    // Assigns a value to a variable
+    INT,    // Converts a variable to an integer
+    ADD,    // Adds two variables
+    SUB,    // Subtracts two variables
+    MUL,    // Multiplies two variables
+    DIV,    // Divides two variables
+    MOD,    // Modulo of two variables
+    POW,    // Raises one variable to the power of another
+    EXPR,   // Evaluates an expression
+    IF,     // If condition is true, executes the block
+    JMP,    // Jumps to the specified line
+    ARR,    // Stores a value in an array
+    ARRI,   // Initializes an array
+    ARRV,   // Retrieves a value from an array
+    BYE,    // Exits the program
+    STR,    // Stores strings as char arrays
+    CAT,    // Concatenates strings
+    CALL,   // Calls a function
+    RECV,   // Receives values from a function
+    RET,    // Returns from a function
+    FREAD,  // Reads a file
+    FWRITE, // Writes to a file
+    FDEL    // Deletes a file
 };
 
 enum log_code
@@ -578,6 +581,8 @@ int main(int argc, char **argv)
             string string_sum;
             string exp;
 
+            int file_error = 0;
+
             while (getline(ss, token, ' '))
             {
                 if (i == 0)
@@ -628,6 +633,12 @@ int main(int argc, char **argv)
                         op = RECV;
                     else if (token == "RET")
                         op = RET;
+                    else if (token == "FREAD")
+                        op = FREAD;
+                    else if (token == "FWRITE")
+                        op = FWRITE;
+                    else if (token == "FDEL")
+                        op = FDEL;
                     else if (token == ">")
                         break;
                     else if (token == "[" || token == "]")
@@ -963,6 +974,77 @@ int main(int argc, char **argv)
                     else if (op == RET)
                     {
                         ret_vals.push(eval(token, memory));
+                    }
+                    else if (op == FREAD)
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                        }
+                        else if (i == 2)
+                        {
+                            ifstream my_file;
+                            my_file.open(eval(token, memory), ios_base::binary);
+
+                            if (!my_file.is_open())
+                            {
+                                file_error = 1;
+                                i++;
+                                continue;
+                            }
+
+                            string buf;
+                            copy(istreambuf_iterator<char>(my_file), istreambuf_iterator<char>(), back_inserter(buf));
+
+                            my_file.close();
+
+                            update_map(memory, key, buf);
+                        }
+                        else
+                        {
+                            update_map(memory, token, string(file_error != 0 ? "1" : "0"));
+                            break;
+                        }
+                    }
+                    else if (op == FWRITE)
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                        }
+                        else if (i == 2)
+                        {
+                            ofstream my_file;
+                            my_file.open(eval(key, memory), ios_base::binary);
+
+                            if (!my_file.is_open())
+                            {
+                                file_error = 1;
+                                i++;
+                                continue;
+                            }
+
+                            my_file << eval(token, memory);
+
+                            my_file.close();
+                        }
+                        else
+                        {
+                            update_map(memory, token, string(file_error != 0 ? "1" : "0"));
+                            break;
+                        }
+                    }
+                    else if (op == FDEL)
+                    {
+                        if (i == 1)
+                        {
+                            file_error = remove(eval(token, memory).c_str());
+                        }
+                        else
+                        {
+                            update_map(memory, token, string(file_error != 0 ? "1" : "0"));
+                            break;
+                        }
                     }
                     else if (op == BYE)
                     {
