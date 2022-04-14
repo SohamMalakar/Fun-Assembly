@@ -24,9 +24,9 @@ Authors- [Soham Malakar](https://www.linkedin.com/in/soham-malakar-108533207) an
 
 ## Overview
 
-It is a Procedure Oriented Programming Language that uses a simple expression evaluator. It stores the variables and elements in a hash table. As the interpreter for this language is rather basic, it does not come with any loops and functions. But these functionalities are easy to obtain using jumps.
+It is a Procedure Oriented Programming Language that uses a simple expression evaluator. It stores the variables and elements in a hash table. As the interpreter for this language is rather basic, it does not come with any loops and functions. But these functionalities are easy to obtain using jumps. It also comes with a minimal file I/O.
 
-The language has a built-in Module System to create modules. It is pretty similar to functions in most programming languages.
+The language has a built-in Module System to create modules. It is pretty similar to functions in other programming languages. It makes the language so modular.
 
 ---
 
