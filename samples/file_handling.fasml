@@ -1,0 +1,30 @@
+
+MOV $file test
+
+CAT $text Fun $SPC Assembly $ENDL
+
+FWRITE $file $text $except ! here $except is optional
+
+IF NEQ $except 0
+[
+    PRT Cannot open file $file $ENDL
+    BYE 1
+]
+
+FREAD $buf $file $except ! here $except is optional
+
+IF NEQ $except 0
+[
+    PRT Cannot read file $file $ENDL
+    BYE 1
+]
+
+PRT $buf
+
+FDEL $file $except ! here $except is optional
+
+IF NEQ $except 0
+[
+    PRT Cannot delete file $file $ENDL
+    BYE 1
+]

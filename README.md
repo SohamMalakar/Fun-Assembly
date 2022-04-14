@@ -30,13 +30,6 @@ The language has a built-in Module System to create modules. It is pretty simila
 
 ---
 
-## Disadvantages
-
-- There is no scope system. Variables are global.
-- It doesn't support structures and file handling.
-
----
-
 ## Installation
 
 There are few pre-compiled binaries available in the [release](https://github.com/SohamMalakar/Fun-Assembly/releases/latest) section. Download the archive from there and extract the files. Then, run the installation script.
@@ -99,9 +92,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 25 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
+There are total 28 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
 
-The 25 Keywords with their functions are provided here:
+The 28 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -130,6 +123,9 @@ The 25 Keywords with their functions are provided here:
 | `CALL`   | Calls a module                                    |
 | `RECV`   | Receives values from a module                     |
 | `RET`    | Returns from a module                             |
+| `FREAD`  | Reads a file                                      |
+| `FWRITE` | Writes to a file                                  |
+| `FDEL`   | Deletes a file                                    |
 
 The 8 Logical Operators with their meanings are provided here:
 
@@ -561,6 +557,52 @@ IF LSS $I $ARGC
 Here, the interpreter iterates over the command line arguments and prints them.
 
 > **_NOTE:_** `&I` gets converted into `$0`, `$1`, `$2`, and so on every time the interpreter executes the loop.
+
+---
+
+### File I/O
+
+#### Read from a file
+
+To read from a file, we use the keyword `FREAD`.
+
+```
+FREAD $buf $filename
+```
+
+Here, the interpreter reads the contents of the file `$filename` and stores it in the buffer `$buf`.
+
+#### Write to a file
+
+To write to a file, we use the keyword `FWRITE`.
+
+```
+FWRITE $filename $content
+```
+
+Here, the interpreter writes the contents of the buffer `$content` to the file `$filename`.
+
+#### Delete a file
+
+To delete a file, we use the keyword `FDEL`.
+
+```
+FDEL $filename
+```
+
+Here, the interpreter deletes the file `$filename`.
+
+#### Exception Handling
+
+To handle exceptions in file I/O, we use an exception handler.
+
+```
+FREAD $buf $filename $except
+FWRITE $filename $content $except
+FDEL $filename $except
+```
+
+If file I/O fails, the value of `$except` is set to `1` else it is set to `0`.
 
 ---
 
