@@ -188,7 +188,7 @@ And yes. You can print multiple variables at once.
 
 ### Printing Special Characters
 
-To print a new line, tab, space, exclamation mark, dollar sign, and ampersand, we print these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP` respectively.
+To print a new line, tab, space, exclamation mark, dollar sign, ampersand, left bracket, and right bracket, we print these predefined variables: `$ENDL`, `$TAB`, `$SPC`, `$EXL`, `$DOL`, `$AMP`, `$LBR` and `$RBR` respectively.
 
 ```
 PRT Hello World
