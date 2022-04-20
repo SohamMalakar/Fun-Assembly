@@ -25,6 +25,7 @@ enum op_code
     SCNL,   // Takes inputs upto the next newline
     MOV,    // Assigns a value to a variable
     INT,    // Converts a variable to an integer
+    CHAR,   // Converts an integer to its ASCII equivalent
     ADD,    // Adds two variables
     SUB,    // Subtracts two variables
     MUL,    // Multiplies two variables
@@ -478,6 +479,8 @@ void define_variables(unordered_map<string, string> &memory)
     memory["$EXL"] = "!";
     memory["$DOL"] = "$";
     memory["$AMP"] = "&";
+    memory["$LBR"] = "[";
+    memory["$RBR"] = "]";
 }
 
 string eval(string str, unordered_map<string, string> memory)
@@ -597,6 +600,8 @@ int main(int argc, char **argv)
                         op = MOV;
                     else if (token == "INT")
                         op = INT;
+                    else if (token == "CHAR")
+                        op = CHAR;
                     else if (token == "ADD")
                         op = ADD;
                     else if (token == "SUB")
@@ -700,6 +705,28 @@ int main(int argc, char **argv)
                             {
                                 cerr << "Error: Line " << line_num + 1 << ": "
                                      << "Cast to int failed\n";
+                                exit(1);
+                            }
+
+                            break;
+                        }
+                    }
+                    else if (op == CHAR)
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                update_map(memory, key, string(1, (char)stoi(eval(token, memory))));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Error: Line " << line_num + 1 << ": "
+                                     << "Cast to char failed\n";
                                 exit(1);
                             }
 
