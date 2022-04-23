@@ -33,6 +33,15 @@ enum op_code
     MOD,    // Modulo of two variables
     POW,    // Raises one variable to the power of another
     EXPR,   // Evaluates an expression
+    AND,    // Logical AND of two variables
+    OR,     // Logical OR of two variables
+    NOT,    // Logical NOT of a variable
+    BAND,   // Bitwise AND of two variables
+    BOR,    // Bitwise OR of two variables
+    BNOT,   // Bitwise NOT of a variable
+    XOR,    // Bitwise XOR of two variables
+    LSH,    // Bitwise left shift of a variable
+    RSH,    // Bitwise right shift of a variable
     IF,     // If condition is true, executes the block
     JMP,    // Jumps to the specified line
     ARR,    // Stores a value in an array
@@ -616,6 +625,24 @@ int main(int argc, char **argv)
                         op = POW;
                     else if (token == "EXPR")
                         op = EXPR;
+                    else if (token == "AND")
+                        op = AND;
+                    else if (token == "OR")
+                        op = OR;
+                    else if (token == "NOT")
+                        op = NOT;
+                    else if (token == "BAND")
+                        op = BAND;
+                    else if (token == "BOR")
+                        op = BOR;
+                    else if (token == "BNOT")
+                        op = BNOT;
+                    else if (token == "XOR")
+                        op = XOR;
+                    else if (token == "LSH")
+                        op = LSH;
+                    else if (token == "RSH")
+                        op = RSH;
                     else if (token == "IF")
                         op = IF;
                     else if (token == "JMP")
@@ -733,7 +760,8 @@ int main(int argc, char **argv)
                             break;
                         }
                     }
-                    else if (op == ADD || op == SUB || op == MUL || op == DIV || op == MOD || op == POW)
+                    else if (op == ADD || op == SUB || op == MUL || op == DIV || op == MOD || op == POW || op == AND ||
+                             op == OR || op == BAND || op == BOR || op == XOR || op == LSH || op == RSH)
                     {
                         if (i == 1)
                         {
@@ -763,10 +791,53 @@ int main(int argc, char **argv)
                                     result = modulo(stod(value1), stod(value2));
                                 else if (op == POW)
                                     result = pow(stod(value1), stod(value2));
+                                else if (op == AND)
+                                    result = stod(value1) && stod(value2);
+                                else if (op == OR)
+                                    result = stod(value1) || stod(value2);
+                                else if (op == BAND)
+                                    result = stoi(value1) & stoi(value2);
+                                else if (op == BOR)
+                                    result = stoi(value1) | stoi(value2);
+                                else if (op == XOR)
+                                    result = stoi(value1) ^ stoi(value2);
+                                else if (op == LSH)
+                                    result = stoi(value1) << stoi(value2);
+                                else if (op == RSH)
+                                    result = stoi(value1) >> stoi(value2);
                             }
                             catch (const invalid_argument &ia)
                             {
-                                cerr << "Type Error: Line " << line_num + 1 << ": We only deal with doubles!\n";
+                                cerr << "Type Error: Line " << line_num + 1
+                                     << ": We only deal with integers and floats\n";
+                                exit(1);
+                            }
+
+                            update_map(memory, key, to_string(result));
+                            break;
+                        }
+                    }
+                    else if (op == NOT || op == BNOT)
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                        }
+                        else
+                        {
+                            double result;
+
+                            try
+                            {
+                                if (op == NOT)
+                                    result = !stod(eval(token, memory));
+                                else if (op == BNOT)
+                                    result = ~stoi(eval(token, memory));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Type Error: Line " << line_num + 1
+                                     << ": We only deal with integers and floats\n";
                                 exit(1);
                             }
 

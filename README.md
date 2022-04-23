@@ -92,9 +92,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 29 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
+There are total 38 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
 
-The 29 Keywords with their functions are provided here:
+The 38 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -111,6 +111,15 @@ The 29 Keywords with their functions are provided here:
 | `MOD`    | Modulo of two variables                           |
 | `POW`    | Raises a variable to the given power              |
 | `EXPR`   | Evaluates an expression                           |
+| `AND`    | Logical AND of two variables                      |
+| `OR`     | Logical OR of two variables                       |
+| `NOT`    | Logical NOT of a variable                         |
+| `BAND`   | Bitwise AND of two variables                      |
+| `BOR`    | Bitwise OR of two variables                       |
+| `BNOT`   | Bitwise NOT of a variable                         |
+| `XOR`    | Bitwise XOR of two variables                      |
+| `LSH`    | Left shift of a variable                          |
+| `RSH`    | Right shift of a variable                         |
 | `IF`     | If the condition is true, executes the block      |
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
