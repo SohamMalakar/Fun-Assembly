@@ -18,6 +18,8 @@ using namespace std;
 #define PRECEDENCE(x) \
     ((x) == "+" || (x) == "-" ? 0 : ((x) == "*" || (x) == "/" || (x) == "%" ? 1 : ((x) == "^" ? 2 : -1)))
 
+int line_num;
+
 enum op_code
 {
     PRT,    // Prints the tokens
@@ -141,7 +143,7 @@ double expr_eval(string infix)
 
                     if (is_operator(infix.at(i + 1)) || infix.at(i + 1) == ' ')
                     {
-                        cerr << "Invalid expression\n";
+                        cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                         exit(1);
                     }
                 }
@@ -165,7 +167,7 @@ double expr_eval(string infix)
             {
                 if (j % 2 == 0)
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -186,7 +188,7 @@ double expr_eval(string infix)
             {
                 if (j % 2 == 1 || dot_found || is_operator(infix.at(i + 1)) || infix.at(i + 1) == ' ')
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -199,7 +201,7 @@ double expr_eval(string infix)
             {
                 if (j % 2 == 1)
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -271,7 +273,7 @@ double expr_eval(string infix)
             }
             else
             {
-                cerr << "Invalid expression\n";
+                cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                 exit(1);
             }
 
@@ -287,7 +289,7 @@ double expr_eval(string infix)
 
                 if (ss_num.fail())
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -295,7 +297,7 @@ double expr_eval(string infix)
             }
             else
             {
-                cerr << "Invalid expression\n";
+                cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                 exit(1);
             }
 
@@ -304,20 +306,20 @@ double expr_eval(string infix)
 
         if (parentheses_count < 0)
         {
-            cerr << "Invalid expression\n";
+            cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
             exit(1);
         }
     }
 
     if (parentheses_count != 0)
     {
-        cerr << "Invalid expression\n";
+        cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
         exit(1);
     }
 
     if (operator_count != operand_count - 1)
     {
-        cerr << "Invalid expression\n";
+        cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
         exit(1);
     }
 
@@ -358,7 +360,7 @@ double expr_eval(string infix)
                 stk.pop();
             else
             {
-                cerr << "Invalid expression\n";
+                cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                 exit(1);
             }
         }
@@ -560,7 +562,7 @@ int main(int argc, char **argv)
 
     define_variables(memory);
 
-    int line_num = 0;
+    line_num = 0;
     string func_name(argv[1]);
     queue<string> ret_vals;
     unordered_map<int, int> pairs;
