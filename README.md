@@ -284,6 +284,14 @@ NOT $var2 $var1
 
 Here, the interpreter performs a logical NOT operation on the variable `$var1` and assign the result to the variable `$var2`.
 
+To perform left shift operation, we use the keyword `LSH`.
+
+```
+LSH $var3 $var1 $var2
+```
+
+Here, the interpreter performs a left shift operation on the variable `$var1` while shifting by `$var2` and assign the result to the variable `$var3`.
+
 ___
 
 ### Expression Evaluation
