@@ -262,6 +262,30 @@ But it'll convert the variables to floats before performing the operation.
 
 ---
 
+### Logical & Bitwise Operations
+
+To perform logical and bitwise operations, we use the keywords `AND`, `OR`, `NOT`, `BAND`, `BOR`, `BNOT`, `XOR`, `LSH`, and `RSH` respectively.
+
+#### Examples
+
+To perform logical AND of two variables, we use the keyword `AND`.
+
+```
+AND $var3 $var1 $var2
+```
+
+Here, the interpreter performs a logical AND operation on the variables `$var1` and `$var2` and assign the result to the variable `$var3`.
+
+To perform logical NOT of a variable, we use the keyword `NOT`.
+
+```
+NOT $var2 $var1
+```
+
+Here, the interpreter performs a logical NOT operation on the variable `$var1` and assign the result to the variable `$var2`.
+
+___
+
 ### Expression Evaluation
 
 To evaluate an expression, we use the keyword `EXPR`.
