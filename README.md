@@ -472,7 +472,7 @@ You can't pass an array to a [Module System](#module-system). To avoid passing a
 
 Since there is no scope in a standalone file, you don't need to pass an array. Everything is global and accessible to all functions in a standalone file.
 
-> What are the [differences](#differences-between-module-system-and-functions) between the [Functions](#functions) and the [Module System](#module-system)?
+> **_NOTE:_** What are the [differences](#differences-between-module-system-and-functions) between the [Functions](#functions) and the [Module System](#module-system)?
 
 ---
 
