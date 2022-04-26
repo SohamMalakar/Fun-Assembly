@@ -24,7 +24,7 @@ Authors- [Soham Malakar](https://www.linkedin.com/in/soham-malakar-108533207) an
 
 ## Overview
 
-It is a Procedure Oriented Programming Language that uses a simple expression evaluator. It stores the variables and elements in a hash table. As the interpreter for this language is rather basic, it does not come with any loops and functions. But these functionalities are easy to obtain using jumps. It also comes with a minimal file I/O.
+It is a Procedure Oriented Programming Language that uses a simple expression evaluator. It stores the variables and elements in a hash table. As the interpreter for this language is rather basic, it does not come with any loops. But loops are easy to obtain using jumps. It has support for user-defined functions to avoid code repetition. It also comes with a minimal file I/O.
 
 The language has a built-in Module System to create modules. It is pretty similar to functions in other programming languages. It makes the language so modular.
 
@@ -92,9 +92,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 38 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
+There are total 40 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
 
-The 38 Keywords with their functions are provided here:
+The 40 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -133,6 +133,8 @@ The 38 Keywords with their functions are provided here:
 | `CALL`   | Calls a module                                    |
 | `RECV`   | Receives values from a module                     |
 | `RET`    | Returns from a module                             |
+| `FCALL`  | Calls a function                                  |
+| `FRET`   | Returns from a function                           |
 | `FREAD`  | Reads a file                                      |
 | `FWRITE` | Writes to a file                                  |
 | `FDEL`   | Deletes a file                                    |
@@ -464,6 +466,14 @@ Here, the interpreter prints the value at the 0th position in the `$array`.
 
 > **_NOTE:_** However, you can't iterate an array using method 2.
 
+#### Passing an array to a module
+
+You can't pass an array to a [Module System](#module-system). To avoid passing an array, you can use the [Functions](#functions).
+
+Since there is no scope in a standalone file, you don't need to pass an array. Everything is global and accessible to all functions in a standalone file.
+
+> What are the [differences](#differences-between-module-system-and-functions) between the [Functions](#functions) and the [Module System](#module-system)?
+
 ---
 
 ### Strings
@@ -715,6 +725,80 @@ RECV $var1 $var2
 Here, the interpreter assigns the values of the returned variables to `$var1` and `$var2`.
 
 > **_NOTE:_** Before calling another module, you have to receive the return values from the previous module. Otherwise, the return values will be lost.
+
+---
+
+### Functions
+
+#### Define Functions
+
+To define a function, follow the following steps:
+
+- Use a [label](#labels) to start defining the function. For example,
+
+  ```
+  > $func
+  ```
+
+- Define the function. For example,
+
+  ```
+  PRT hello world
+  ```
+
+- Return the control to the caller. To do this, use the keyword `FRET`.
+
+  ```
+  FRET
+  ```
+
+#### Call Functions
+
+To call a function, use the keyword `FCALL` followed by the label of the function.
+
+```
+FCALL $func
+```
+
+Here, the interpreter calls the function `$func`.
+
+#### Example
+
+An example of a function would be the following:
+
+```
+MOV $n 5
+FCALL $fact
+PRT $f
+
+BYE 0
+
+> $fact
+    MOV $f 1
+    MOV $i 1
+
+    > $loop1
+    IF LEQ $i $n
+    [
+        MUL $f $f $i
+        ADD $i $i 1
+        JMP $loop1
+    ]
+
+    FRET
+```
+
+> **_NOTE:_** You can define multiple functions in a single file. However, you can't call them from other modules. You need to call them within the same file.
+
+---
+
+### Differences between Module System and Functions
+
+| Modules                                                                                                            | Functions                                                      |
+| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| You can define only one module in a single file. So you will be needing multiple files to define multiple modules. | You can define multiple functions in a single file.            |
+| You can pass and return multiple values from a module.                                                             | You can't even pass and return a single value from a function. |
+| Useful for creating a library of functions.                                                                        | Useful for working with global variables.                      |
 
 ---
 
