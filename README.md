@@ -792,7 +792,7 @@ BYE 0
 
 ---
 
-### Differences between Module System and Functions
+## Differences between Module System and Functions
 
 | Modules                                                                                                            | Functions                                                      |
 | ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
