@@ -92,9 +92,9 @@ You can install the extension from [Marketplace](https://marketplace.visualstudi
 
 ## Keywords
 
-There are total 29 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
+There are total 38 reserved Keywords and 8 Logical Operators present in this language which get recognized by this interpreter.
 
-The 29 Keywords with their functions are provided here:
+The 38 Keywords with their functions are provided here:
 
 | Keywords | Description                                       |
 | -------- | ------------------------------------------------- |
@@ -111,6 +111,15 @@ The 29 Keywords with their functions are provided here:
 | `MOD`    | Modulo of two variables                           |
 | `POW`    | Raises a variable to the given power              |
 | `EXPR`   | Evaluates an expression                           |
+| `AND`    | Logical AND of two variables                      |
+| `OR`     | Logical OR of two variables                       |
+| `NOT`    | Logical NOT of a variable                         |
+| `BAND`   | Bitwise AND of two variables                      |
+| `BOR`    | Bitwise OR of two variables                       |
+| `BNOT`   | Bitwise NOT of a variable                         |
+| `BXOR`   | Bitwise XOR of two variables                      |
+| `LSHIFT` | Left shift of a variable                          |
+| `RSHIFT` | Right shift of a variable                         |
 | `IF`     | If the condition is true, executes the block      |
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
@@ -250,6 +259,38 @@ ADD $var3 $var1 $var2
 Here, the interpreter adds the values of the variables `$var1` and `$var2` and assign the result to the variable `$var3`.
 
 But it'll convert the variables to floats before performing the operation.
+
+---
+
+### Logical & Bitwise Operations
+
+To perform logical and bitwise operations, we use the keywords `AND`, `OR`, `NOT`, `BAND`, `BOR`, `BNOT`, `BXOR`, `LSHIFT`, and `RSHIFT` respectively.
+
+#### Examples
+
+To perform logical AND of two variables, we use the keyword `AND`.
+
+```
+AND $var3 $var1 $var2
+```
+
+Here, the interpreter performs a logical AND operation on the variables `$var1` and `$var2` and assign the result to the variable `$var3`.
+
+To perform logical NOT of a variable, we use the keyword `NOT`.
+
+```
+NOT $var2 $var1
+```
+
+Here, the interpreter performs a logical NOT operation on the variable `$var1` and assign the result to the variable `$var2`.
+
+To perform left shift operation, we use the keyword `LSHIFT`.
+
+```
+LSHIFT $var3 $var1 $var2
+```
+
+Here, the interpreter performs a left shift operation on the variable `$var1` while shifting by `$var2` and assign the result to the variable `$var3`.
 
 ---
 

@@ -18,6 +18,8 @@ using namespace std;
 #define PRECEDENCE(x) \
     ((x) == "+" || (x) == "-" ? 0 : ((x) == "*" || (x) == "/" || (x) == "%" ? 1 : ((x) == "^" ? 2 : -1)))
 
+int line_num;
+
 enum op_code
 {
     PRT,    // Prints the tokens
@@ -33,6 +35,15 @@ enum op_code
     MOD,    // Modulo of two variables
     POW,    // Raises one variable to the power of another
     EXPR,   // Evaluates an expression
+    AND,    // Logical AND of two variables
+    OR,     // Logical OR of two variables
+    NOT,    // Logical NOT of a variable
+    BAND,   // Bitwise AND of two variables
+    BOR,    // Bitwise OR of two variables
+    BNOT,   // Bitwise NOT of a variable
+    BXOR,   // Bitwise XOR of two variables
+    LSHIFT, // Bitwise left shift of a variable
+    RSHIFT, // Bitwise right shift of a variable
     IF,     // If condition is true, executes the block
     JMP,    // Jumps to the specified line
     ARR,    // Stores a value in an array
@@ -132,7 +143,7 @@ double expr_eval(string infix)
 
                     if (is_operator(infix.at(i + 1)) || infix.at(i + 1) == ' ')
                     {
-                        cerr << "Invalid expression\n";
+                        cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                         exit(1);
                     }
                 }
@@ -156,7 +167,7 @@ double expr_eval(string infix)
             {
                 if (j % 2 == 0)
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -177,7 +188,7 @@ double expr_eval(string infix)
             {
                 if (j % 2 == 1 || dot_found || is_operator(infix.at(i + 1)) || infix.at(i + 1) == ' ')
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -190,7 +201,7 @@ double expr_eval(string infix)
             {
                 if (j % 2 == 1)
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -262,7 +273,7 @@ double expr_eval(string infix)
             }
             else
             {
-                cerr << "Invalid expression\n";
+                cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                 exit(1);
             }
 
@@ -278,7 +289,7 @@ double expr_eval(string infix)
 
                 if (ss_num.fail())
                 {
-                    cerr << "Invalid expression\n";
+                    cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                     exit(1);
                 }
 
@@ -286,7 +297,7 @@ double expr_eval(string infix)
             }
             else
             {
-                cerr << "Invalid expression\n";
+                cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                 exit(1);
             }
 
@@ -295,20 +306,20 @@ double expr_eval(string infix)
 
         if (parentheses_count < 0)
         {
-            cerr << "Invalid expression\n";
+            cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
             exit(1);
         }
     }
 
     if (parentheses_count != 0)
     {
-        cerr << "Invalid expression\n";
+        cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
         exit(1);
     }
 
     if (operator_count != operand_count - 1)
     {
-        cerr << "Invalid expression\n";
+        cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
         exit(1);
     }
 
@@ -349,7 +360,7 @@ double expr_eval(string infix)
                 stk.pop();
             else
             {
-                cerr << "Invalid expression\n";
+                cerr << "Error: Line " << line_num + 1 << ": EXPR: Invalid expression!\n";
                 exit(1);
             }
         }
@@ -551,7 +562,7 @@ int main(int argc, char **argv)
 
     define_variables(memory);
 
-    int line_num = 0;
+    line_num = 0;
     string func_name(argv[1]);
     queue<string> ret_vals;
     unordered_map<int, int> pairs;
@@ -616,6 +627,24 @@ int main(int argc, char **argv)
                         op = POW;
                     else if (token == "EXPR")
                         op = EXPR;
+                    else if (token == "AND")
+                        op = AND;
+                    else if (token == "OR")
+                        op = OR;
+                    else if (token == "NOT")
+                        op = NOT;
+                    else if (token == "BAND")
+                        op = BAND;
+                    else if (token == "BOR")
+                        op = BOR;
+                    else if (token == "BNOT")
+                        op = BNOT;
+                    else if (token == "BXOR")
+                        op = BXOR;
+                    else if (token == "LSHIFT")
+                        op = LSHIFT;
+                    else if (token == "RSHIFT")
+                        op = RSHIFT;
                     else if (token == "IF")
                         op = IF;
                     else if (token == "JMP")
@@ -733,7 +762,8 @@ int main(int argc, char **argv)
                             break;
                         }
                     }
-                    else if (op == ADD || op == SUB || op == MUL || op == DIV || op == MOD || op == POW)
+                    else if (op == ADD || op == SUB || op == MUL || op == DIV || op == MOD || op == POW || op == AND ||
+                             op == OR || op == BAND || op == BOR || op == BXOR || op == LSHIFT || op == RSHIFT)
                     {
                         if (i == 1)
                         {
@@ -763,10 +793,53 @@ int main(int argc, char **argv)
                                     result = modulo(stod(value1), stod(value2));
                                 else if (op == POW)
                                     result = pow(stod(value1), stod(value2));
+                                else if (op == AND)
+                                    result = stod(value1) && stod(value2);
+                                else if (op == OR)
+                                    result = stod(value1) || stod(value2);
+                                else if (op == BAND)
+                                    result = stoi(value1) & stoi(value2);
+                                else if (op == BOR)
+                                    result = stoi(value1) | stoi(value2);
+                                else if (op == BXOR)
+                                    result = stoi(value1) ^ stoi(value2);
+                                else if (op == LSHIFT)
+                                    result = stoi(value1) << stoi(value2);
+                                else if (op == RSHIFT)
+                                    result = stoi(value1) >> stoi(value2);
                             }
                             catch (const invalid_argument &ia)
                             {
-                                cerr << "Type Error: Line " << line_num + 1 << ": We only deal with doubles!\n";
+                                cerr << "Type Error: Line " << line_num + 1
+                                     << ": We only deal with integers and floats\n";
+                                exit(1);
+                            }
+
+                            update_map(memory, key, to_string(result));
+                            break;
+                        }
+                    }
+                    else if (op == NOT || op == BNOT)
+                    {
+                        if (i == 1)
+                        {
+                            key = token;
+                        }
+                        else
+                        {
+                            double result;
+
+                            try
+                            {
+                                if (op == NOT)
+                                    result = !stod(eval(token, memory));
+                                else if (op == BNOT)
+                                    result = ~stoi(eval(token, memory));
+                            }
+                            catch (const invalid_argument &ia)
+                            {
+                                cerr << "Type Error: Line " << line_num + 1
+                                     << ": We only deal with integers and floats\n";
                                 exit(1);
                             }
 

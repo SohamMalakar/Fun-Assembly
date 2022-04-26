@@ -1,0 +1,52 @@
+
+IF NEQ $ARGC 2
+[
+    PRT usage: $0 <integer> $ENDL
+    BYE 1
+]
+
+MOV $n $1
+EXPR $y $n - 1
+
+> $loop0
+IF GEQ $y 0
+[
+    MOV $i 0
+
+    > $loop1
+    IF LSS $i $y
+    [
+        PRT $SPC
+        ADD $i $i 1
+
+        JMP $loop1
+    ]
+
+    MOV $x 0
+
+    > $loop2
+    EXPR $temp $x + $y
+    IF LSS $temp $n
+    [
+        BAND $temp $x $y
+        IF NEQ $temp 0
+        [
+            PRT $SPC
+            PRT $SPC
+            JMP $skip0
+        ]
+        
+        PRT *
+        PRT $SPC
+
+        > $skip0
+
+        ADD $x $x 1
+        JMP $loop2
+    ]
+
+    PRT $ENDL
+    SUB $y $y 1
+
+    JMP $loop0
+]

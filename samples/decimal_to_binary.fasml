@@ -1,0 +1,24 @@
+
+MOV $num $1
+MOV $count 31
+
+> $loop1
+IF GEQ $count 0
+[
+    RSHIFT $k $num $count
+    BAND $temp $k 1
+    IF EQL $temp 1
+    [
+        PRT 1
+        JMP $skip1
+    ]
+
+    PRT 0
+
+    > $skip1
+
+    SUB $count $count 1
+    JMP $loop1
+]
+
+PRT $ENDL
