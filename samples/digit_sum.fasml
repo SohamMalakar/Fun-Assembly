@@ -1,0 +1,28 @@
+
+IF NEQ $ARGC 2
+[
+    PRT Usage: $0 <integer> $ENDL
+    BYE 1
+]
+
+MOV $num $1
+
+FCALL $ds
+INT $digit_sum $digit_sum
+PRT $digit_sum $ENDL
+
+BYE 0
+
+> $ds
+
+    MOD $digit_sum $num 9
+    
+    IF NEQ $num 0
+    [
+        IF EQL $digit_sum 0
+        [
+            MOV $digit_sum 9
+        ]
+    ]
+
+    FRET
