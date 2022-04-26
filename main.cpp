@@ -41,9 +41,9 @@ enum op_code
     BAND,   // Bitwise AND of two variables
     BOR,    // Bitwise OR of two variables
     BNOT,   // Bitwise NOT of a variable
-    XOR,    // Bitwise XOR of two variables
-    LSH,    // Bitwise left shift of a variable
-    RSH,    // Bitwise right shift of a variable
+    BXOR,   // Bitwise XOR of two variables
+    LSHIFT, // Bitwise left shift of a variable
+    RSHIFT, // Bitwise right shift of a variable
     IF,     // If condition is true, executes the block
     JMP,    // Jumps to the specified line
     ARR,    // Stores a value in an array
@@ -639,12 +639,12 @@ int main(int argc, char **argv)
                         op = BOR;
                     else if (token == "BNOT")
                         op = BNOT;
-                    else if (token == "XOR")
-                        op = XOR;
-                    else if (token == "LSH")
-                        op = LSH;
-                    else if (token == "RSH")
-                        op = RSH;
+                    else if (token == "BXOR")
+                        op = BXOR;
+                    else if (token == "LSHIFT")
+                        op = LSHIFT;
+                    else if (token == "RSHIFT")
+                        op = RSHIFT;
                     else if (token == "IF")
                         op = IF;
                     else if (token == "JMP")
@@ -763,7 +763,7 @@ int main(int argc, char **argv)
                         }
                     }
                     else if (op == ADD || op == SUB || op == MUL || op == DIV || op == MOD || op == POW || op == AND ||
-                             op == OR || op == BAND || op == BOR || op == XOR || op == LSH || op == RSH)
+                             op == OR || op == BAND || op == BOR || op == BXOR || op == LSHIFT || op == RSHIFT)
                     {
                         if (i == 1)
                         {
@@ -801,11 +801,11 @@ int main(int argc, char **argv)
                                     result = stoi(value1) & stoi(value2);
                                 else if (op == BOR)
                                     result = stoi(value1) | stoi(value2);
-                                else if (op == XOR)
+                                else if (op == BXOR)
                                     result = stoi(value1) ^ stoi(value2);
-                                else if (op == LSH)
+                                else if (op == LSHIFT)
                                     result = stoi(value1) << stoi(value2);
-                                else if (op == RSH)
+                                else if (op == RSHIFT)
                                     result = stoi(value1) >> stoi(value2);
                             }
                             catch (const invalid_argument &ia)

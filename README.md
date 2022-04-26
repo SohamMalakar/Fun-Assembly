@@ -117,9 +117,9 @@ The 38 Keywords with their functions are provided here:
 | `BAND`   | Bitwise AND of two variables                      |
 | `BOR`    | Bitwise OR of two variables                       |
 | `BNOT`   | Bitwise NOT of a variable                         |
-| `XOR`    | Bitwise XOR of two variables                      |
-| `LSH`    | Left shift of a variable                          |
-| `RSH`    | Right shift of a variable                         |
+| `BXOR`   | Bitwise XOR of two variables                      |
+| `LSHIFT` | Left shift of a variable                          |
+| `RSHIFT` | Right shift of a variable                         |
 | `IF`     | If the condition is true, executes the block      |
 | `>`      | Creates a label                                   |
 | `JMP`    | Jumps to a label                                  |
@@ -264,7 +264,7 @@ But it'll convert the variables to floats before performing the operation.
 
 ### Logical & Bitwise Operations
 
-To perform logical and bitwise operations, we use the keywords `AND`, `OR`, `NOT`, `BAND`, `BOR`, `BNOT`, `XOR`, `LSH`, and `RSH` respectively.
+To perform logical and bitwise operations, we use the keywords `AND`, `OR`, `NOT`, `BAND`, `BOR`, `BNOT`, `BXOR`, `LSHIFT`, and `RSHIFT` respectively.
 
 #### Examples
 
@@ -284,15 +284,15 @@ NOT $var2 $var1
 
 Here, the interpreter performs a logical NOT operation on the variable `$var1` and assign the result to the variable `$var2`.
 
-To perform left shift operation, we use the keyword `LSH`.
+To perform left shift operation, we use the keyword `LSHIFT`.
 
 ```
-LSH $var3 $var1 $var2
+LSHIFT $var3 $var1 $var2
 ```
 
 Here, the interpreter performs a left shift operation on the variable `$var1` while shifting by `$var2` and assign the result to the variable `$var3`.
 
-___
+---
 
 ### Expression Evaluation
 

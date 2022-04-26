@@ -5,7 +5,7 @@ MOV $count 31
 > $loop1
 IF GEQ $count 0
 [
-    RSH $k $num $count
+    RSHIFT $k $num $count
     BAND $temp $k 1
     IF EQL $temp 1
     [
