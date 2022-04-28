@@ -734,23 +734,17 @@ Here, the interpreter assigns the values of the returned variables to `$var1` an
 
 To define a function, follow the following steps:
 
-- Use a [label](#labels) to start defining the function. For example,
+- Use a [label](#labels) to start defining the function.
+- Define the function.
+- Return the control to the caller. (Use the keyword `FRET`)
 
-  ```
-  > $func
-  ```
+Consider the following code snippet:
 
-- Define the function. For example,
-
-  ```
-  PRT hello world
-  ```
-
-- Return the control to the caller. To do this, use the keyword `FRET`.
-
-  ```
-  FRET
-  ```
+```
+> $func
+    PRT hello world
+    FRET
+```
 
 #### Call Functions
 
